@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="android," />
 
 
 
@@ -84,15 +84,34 @@
 
 
 
-<meta name="description" content="be a better coder">
-<meta property="og:type" content="website">
-<meta property="og:title" content="DreamX">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="Android 开发有问题（在过去的7年）。大多数项目没有测试（单元，集成，功能); 编译器和lint的警告被忽视; 代码像臭的意大利面条。
+坏消息: Google从一开始就参与这样的Android开发文化。
+perfmatters VS qualitymatters
+
+是的，google 关心perfmatters，但是qualitymatters更重要并且应该优先考虑。
+
+Optimizati">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 开发文化quality matters">
+<meta property="og:url" content="http://yoursite.com/2016/02/05/2016-01-20-android-开发文化QualityMatter/index.html">
 <meta property="og:site_name" content="DreamX">
-<meta property="og:description" content="be a better coder">
+<meta property="og:description" content="Android 开发有问题（在过去的7年）。大多数项目没有测试（单元，集成，功能); 编译器和lint的警告被忽视; 代码像臭的意大利面条。
+坏消息: Google从一开始就参与这样的Android开发文化。
+perfmatters VS qualitymatters
+
+是的，google 关心perfmatters，但是qualitymatters更重要并且应该优先考虑。
+
+Optimizati">
+<meta property="og:updated_time" content="2016-09-21T10:08:11.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="DreamX">
-<meta name="twitter:description" content="be a better coder">
+<meta name="twitter:title" content="Android 开发文化quality matters">
+<meta name="twitter:description" content="Android 开发有问题（在过去的7年）。大多数项目没有测试（单元，集成，功能); 编译器和lint的警告被忽视; 代码像臭的意大利面条。
+坏消息: Google从一开始就参与这样的Android开发文化。
+perfmatters VS qualitymatters
+
+是的，google 关心perfmatters，但是qualitymatters更重要并且应该优先考虑。
+
+Optimizati">
 
 
 
@@ -113,9 +132,9 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2016/02/05/2016-01-20-android-开发文化QualityMatter/"/>
 
-  <title> DreamX </title>
+  <title> Android 开发文化quality matters | DreamX </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -146,9 +165,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left 
-   page-home 
- ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -258,9 +275,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
   
@@ -280,130 +297,7 @@
             
             
               
-                
-                <a class="post-title-link" href="/2016/09/02/2016-8-20-深入浅出ConstraintLayout：part1/" itemprop="url">
-                  深入浅出ConstraintLayout（约束布局）：Part1
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-09-02T08:36:29Z" content="2016-09-02">
-              2016-09-02
-            </time>
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/09/02/2016-8-20-深入浅出ConstraintLayout：part1/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/02/2016-8-20-深入浅出ConstraintLayout：part1/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2016/09/02/2016-8-20-深入浅出ConstraintLayout：part1/" class="leancloud_visitors" data-flag-title="深入浅出ConstraintLayout（约束布局）：Part1">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <blockquote>
-<p>ConstraintLayout和布局编辑器工具目前是预览版本。本文内容是基于 <code>constraint-layout:1.0.0-alpha4</code>的代码和行为。在最终版本的工具中这些行为可能会改变。</p>
-</blockquote>
-<p>谷歌I/O 2016年宣布了提高布局体验的新工具和库来构建Android应用程序，Android stuido已经嵌入了基于约束的可视化布局编辑器，和运行时解释这些约束的<code>ConstraintLayout</code>新容器。</p>
-<p>本文重点解释<code>ConstraintLayout</code>容器的结构和它是如何工作的，新的Android stuido布局编辑器的功能是为开发者更容易管理<code>ConstraintLayout</code>容器强大和灵活的特性而设计的。深入理解<code>ConstraintLayout</code>,我们将能更好地使用开发工具。</p>
-<blockquote>
-<p><code>ConstraintLayout</code>作为一个非捆绑支持库发布，因此你会在本文看到许多XML属性以<code>app:</code>为前缀而非<code>android:</code>:因为它们都来自本地包命名空间。</p>
-</blockquote>
-<p>让我们从定义约束是什么开始…</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/09/02/2016-8-20-深入浅出ConstraintLayout：part1/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/02/05/2016-01-20-android-开发文化QualityMatter/" itemprop="url">
-                  Android 开发文化quality matters
-                </a>
+                Android 开发文化quality matters
               
             
           </h1>
@@ -478,8 +372,7 @@
       
 
       
-        
-          <p>Android 开发有问题（在过去的7年）。大多数项目没有测试（单元，集成，功能); 编译器和lint的警告被忽视; 代码像臭的意大利面条。</p>
+        <p>Android 开发有问题（在过去的7年）。大多数项目没有测试（单元，集成，功能); 编译器和lint的警告被忽视; 代码像臭的意大利面条。</p>
 <p>坏消息: Google从一开始就参与这样的Android开发文化。</p>
 <blockquote class="blockquote-center"><p>perfmatters VS qualitymatters</p>
 </blockquote>
@@ -488,266 +381,130 @@
 <p>Optimization without a good level of code quality is a kind of premature optimization，premature optimization is also known as the root of all evil (not in all situations，but mostly it is evil)。</p>
 </blockquote>
 <p>好消息: 公司像Square，SoundCloud，Twitter和一些开发者通过做演讲，写博客使Android 开发更好，非常感谢他们。同时，谷歌终于对提高Android应用程序质量感兴趣: 在 AndroidDevSummit 和其他近期会议我们看见关于测试的内容，请继续保持!</p>
-<p><strong>是时候搞定Android开发了</strong>。<br>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/02/05/2016-01-20-android-开发文化QualityMatter/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
+<p><strong>是时候搞定Android开发了</strong>。<br><a id="more"></a></p>
+<h2 id="Android-开发文化"><a href="#Android-开发文化" class="headerlink" title="Android 开发文化"></a>Android 开发文化</h2><h3 id="尽快失败，尽早失败（Fail-fast，fail-early）"><a href="#尽快失败，尽早失败（Fail-fast，fail-early）" class="headerlink" title="尽快失败，尽早失败（Fail fast，fail early）"></a><strong>尽快失败，尽早失败（Fail fast，fail early</strong>）</h3><p>为什么?–因为如果你能在集成到用户产品之前发现问题—-你应该那样做。这个文档的每一项都遵守这个原则。</p>
+<h3 id="Pull-Requests，代码审查（Code-Review-持续集成（Continuous-Integration）"><a href="#Pull-Requests，代码审查（Code-Review-持续集成（Continuous-Integration）" class="headerlink" title="Pull Requests，代码审查（Code Review),持续集成（Continuous Integration）"></a><strong>Pull Requests，代码审查（Code Review),持续集成（Continuous Integration）</strong></h3><p>项目应该在版本控制系统下开发，开发过程应该发生通过Pull Requests进行<br>代码审查，没有什么应该被直接推到主分支，每个PR应该在持续集成系统触发build项目活动。 build应该是可复制的，团队中的每个成员能方便的build项目。</p>
+<p>尽早失败：如果一个PR在CI上build失败–这个PR不应该到被修复。</p>
+<h3 id="代码质量（Code-quality）"><a href="#代码质量（Code-quality）" class="headerlink" title="代码质量（Code quality）"></a><strong>代码质量（Code quality）</strong></h3><p>你的代码应该是<a href="https://en。wikipedia。org/wiki/SOLID_(object-oriented_design" target="_blank" rel="external">SOLID</a>，或者接近SOLID。这完全是取决于你如何实现这一点。这不仅是 <a href="https://en。wikipedia。org/wiki/Model–view–presenter" target="_blank" rel="external">MVP</a>/<a href="https://en。wikipedia。org/wiki/Model–view–viewmodel" target="_blank" rel="external">MVVM</a>/<a href="https://en。wikipedia。org/wiki/Model–view–controller" target="_blank" rel="external">MVC</a>/等，而且是在你应用每部分的每段代码。宁愿写<a href="https://en。wikipedia。org/wiki/Pure_function" target="_blank" rel="external">纯函数</a>和<a href="https://en。wikipedia。org/wiki/Immutable_object" target="_blank" rel="external">不变对象</a>。</p>
+<p>尽早失败：不要只成为在项目中写可维护代码的开发者，也要确定其他人写好的代码（和他们聊聊，讨论这个文档，督促他们）－在代码审查阶段阻止坏的代码。</p>
+<h3 id="静态代码-资源分析（Static-Code-Resources-Analysis）"><a href="#静态代码-资源分析（Static-Code-Resources-Analysis）" class="headerlink" title="静态代码/资源分析（Static Code/Resources Analysis）"></a><strong>静态代码/资源分析</strong>（Static Code/Resources Analysis）</h3><p>分析允许你在你集成到产品之前找到你代码中的问题。 另一方面它有助于代码审查。</p>
+<p>Android Lint，FindBugs，PMD，SonarQube，FB Infer，etc。</p>
+<p>尽早失败:在CI期间运行静态分析器并配置它在项目有警告（不止是错误）的情况下 build 失败。</p>
+<h3 id="单元测试"><a href="#单元测试" class="headerlink" title="单元测试"></a><strong>单元测试</strong></h3><p>是的，测试，单元测试通常检查函数／对象是否正常地工作，在你项目中越多测试和高代码覆盖率–你给用户的产品就更好更稳定。事实上，绝大多数简单的bugs可以通过单元测试找到，并且当然你的应用有数据处理–单元测试会帮助你确定你的代码是否正确工作。</p>
+<p>一个简短的Android项目单元测试指南:</p>
+<ul>
+<li>试着在JVM上运行单元测试因为这样比在设备／虚拟机上运行快的多。</li>
+<li>Android Gradle Plugin能在JVM上运行单元测试。 只要把你的测试代码放在test／<code>java_or_other_lang</code>。</li>
+<li>你可以从IDE（在test右击并执行run）运行测试或者在Terminal执行<code>。/gradlew test</code></li>
+<li>你很快认识到如果在JVM运行你的使用Android SDK类的单元测试，Android SDK类是不存在并且会抛出异常。这是悲伤但可以解决的。你可以在Robolectric test runner 下运行需要Android SDK的测试，Robolectrie会提供你工作的大多数Android SDK类的实现。</li>
+<li>JUnit 提供好的运行器和相当好的规则概念，但是JUnit断言很糟糕，你可以通过AssertJ，Truth等使用更好的断言并且在JUnit(or TestNG/Spock/etc)下面运行</li>
+<li>如果你需要检查行为并且Mock一些对象－你可以使用像Mockito这样的mocking库<blockquote>
+<p>测试驱动开发或别的－由你决定，但是当然要试一试。 </p>
+</blockquote>
+</li>
+</ul>
+<p>尽早失败:在CI期间运行单元测试，当一些测试失败时则 build 失败。 </p>
+<h3 id="代码覆盖率（Code-Coverage）"><a href="#代码覆盖率（Code-Coverage）" class="headerlink" title="代码覆盖率（Code Coverage）"></a><strong>代码覆盖率</strong>（Code Coverage）</h3><p>一旦你开始编写单元测试你需要知道你的代码覆盖率是否足够好。 你可以使用像Jacoco这样的工具检查测试所覆盖的代码路径。 如果你测试代码的行为取决于一些条件，代码覆盖率是特别有用，并且你需要确保所有可能的变体代码执行的检查。</p>
+<p>你可以启用Jacoco通过apply plugin: ‘jacoco’。 你可以通过Gradle task配置应该检查的类/包。</p>
+<p>如果覆盖率不够高，配置代码覆盖率的工具使build失败。 如果你在一个现有的项目开始单元测试-排除没有测试的类-一旦你用测试覆盖它们然后把它们从排除列表移除。 这个规则会帮助你确定新代码覆盖的足够好。 你可以使用jacoco-coverage插件根据覆盖率报告使build失败。</p>
+<p>尽早失败: 如果代码覆盖率不够广，则 build 失败，确定在CI期间检查代码覆盖率。</p>
+<h3 id="功能测试（Functional-UI-tests）"><a href="#功能测试（Functional-UI-tests）" class="headerlink" title="功能测试（Functional (UI) tests）"></a><strong>功能测试</strong>（Functional (UI) tests）</h3><p>是的。 更多测试。 功能测试是从用户角度检查你应用的功能。 功能测试启动你的应用并且验证你核心的特性是否正确工作。 例如加载数据在UI显示等等。 你的QA团队来做大部分工作能通过功能测试自动化，但这并不意味着你不需要QA团队。</p>
+<p>这里有两种运行功能测试的普通方法。 你可以在 Android Instrumentation 或 UIAutomator下运行它们。 主要的不同是在Android Instrumentation 下的测试只能在你的应用下面工作，它们可以接触到你的代码等等。 在 UIAutomator下的测试运行在系统进程并可以通过可用API（比 Android Instrumentation的能力更有限）与你的应用交互。 如果你需要测试你应用与其它应用的交互－你可以使用UIAutomator，但是通常你可以模拟这样的交互并且通过 Android Instrumentation测试它们，你的测试不会依赖外部因素</p>
+<p>建议:</p>
+<ul>
+<li>使用 Android Instrumentation 和 Espresso。</li>
+<li>面向页面架构的测试会帮助你写和维护测试更容易，更快（i。e。 当你有一个描述你应用中屏幕或部分屏幕页面类）</li>
+<li>模拟与后端的交互，它会使你的测试完全独立，并且你能并行的运行测试 ，并确信你在测试之间没有共享状态，在这里 MockWebServer 是一个好的助手</li>
+<li>开发者应该写功能测试，是的</li>
+<li>教你的QA团队写功能测试－通常QAs思考不同并且知道哪种情况需要被检查</li>
+<li>检查功能测试的代码覆盖率</li>
+</ul>
+<p>尽早失败:在CI期间运行功能测试，当一些测试失败时则 build 失败。</p>
+<h3 id="集成测试"><a href="#集成测试" class="headerlink" title="集成测试"></a><strong>集成测试</strong></h3><p>是的。 更多测试。 通常，集成测试检查你的组件在一起工作的时候有什么不同:HTTP layer，REST API layer，Execution layer (RxJava，etc)等等。 </p>
+<p>想象你有一个类使用了一组其它类并且从后台加载数据，接下来处理它并且储存在数据库，你应该用单元测试覆盖每个类，但是你也能用集成覆盖如此复杂的组合。</p>
+<p>这里与单元测试的主要不同是你不需要模拟对象，而是测试中真的实现对象。你可以模拟数据传递和数据库状态然后运行真实代码来看它会如何做它的工作。</p>
+<p>你可以在设备/虚拟机在 Android Instrumentation下运行集成测试或者在JVM作为单元测试的部分，因为测试在JVM上运行的更快－使用JVM。</p>
+<p>尽早失败:在CI期间运行集成测试，当一些测试失败时则 build 失败。</p>
+<h3 id="开发者设置菜单-aka-Debug-Drawer"><a href="#开发者设置菜单-aka-Debug-Drawer" class="headerlink" title="开发者设置菜单 (aka Debug Drawer)"></a><strong>开发者设置菜单</strong> (aka Debug Drawer)</h3><p>你调试build时这种菜单允许你enable/disable工具像 <a href="http://facebook。github。io/stetho/" target="_blank" rel="external">Stetho</a>，<a href="https://github。com/square/leakcanary" target="_blank" rel="external">LeakCanary</a>，<a href="https://github。com/brianPlummer/TinyDancer" target="_blank" rel="external">TinyDancer</a>，模拟/改变应用的一些行为等等。</p>
+<p>在运行中不需要修改代码来改变和检查应用的能力会节省你和QA团队成吨的时间。</p>
+<p>尽早失败：像 LeakCanary 的工具会帮助你在你的分析系统中从真实用户接收到崩溃报告之前探测问题，在每次发布之前教你的QA团队使用这种工具作为可接受测试的一部分。</p>
+<blockquote>
+<p>请考虑你的开发文化，和你的团队成员讨论这个主题，你的开发过程和你build产品的质量会有显著的提高!</p>
+</blockquote>
+
+      
+    </div>
+
+    <div>
+      
         
+
       
     </div>
 
     <div>
       
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持优质技术分享，您的支持将鼓励我继续努力！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechatpay.png" alt="Qinfeng WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
     </div>
+  </div>
 
-    <div>
+
       
     </div>
 
     <footer class="post-footer">
       
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/01/25/2016-1-16-Dagger2-依赖注入/" itemprop="url">
-                  Dagger2依赖注入
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-01-25T10:06:24Z" content="2016-01-25">
-              2016-01-25
-            </time>
-          </span>
-
+        <div class="post-tags">
           
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/01/25/2016-1-16-Dagger2-依赖注入/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/25/2016-1-16-Dagger2-依赖注入/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2016/01/25/2016-1-16-Dagger2-依赖注入/" class="leancloud_visitors" data-flag-title="Dagger2依赖注入">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
+            <a href="/tags/android/" rel="tag">#android</a>
           
         </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          <p>许多android应用实例化对象经常要求其他依赖，举个例子，实例化twitter API client使用网络（retrofit），为了使用这个库，你也许需要加入解析库（Gson），另外，实现认证或缓存也许需要shared preference 或其他普通存储的类要求首先实例化它们并形成依赖链。</p>
-<p>dagger2 为你分析这些依赖并生成代码把它们串起来。尽管有其他依赖注入库，大多受限于依赖XML，要求在运行时验证依赖问题或在启动时造成性能负担。dagger 2 完全通过使用java annotation processors和编译时检查来分析和验证依赖。直到现在它被认为是最高效的依赖注入框架之一。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/01/25/2016-1-16-Dagger2-依赖注入/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/01/25/2016-1-16-Dagger2-依赖注入/" rel="next" title="Dagger2依赖注入">
+                <i class="fa fa-chevron-left"></i> Dagger2依赖注入
+              </a>
+            
           </div>
-        
-      
-    </div>
 
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
+          <div class="post-nav-prev post-nav-item">
             
+              <a href="/2016/09/02/2016-8-20-深入浅出ConstraintLayout：part1/" rel="prev" title="深入浅出ConstraintLayout（约束布局）：Part1">
+                深入浅出ConstraintLayout（约束布局）：Part1 <i class="fa fa-chevron-right"></i>
+              </a>
             
-              
-                
-                <a class="post-title-link" href="/2016/01/13/2016-01-13-Android库的依赖管理/" itemprop="url">
-                  Android库项目的依赖管理
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-01-13T07:52:14Z" content="2016-01-13">
-              2016-01-13
-            </time>
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/01/13/2016-01-13-Android库的依赖管理/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/13/2016-01-13-Android库的依赖管理/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2016/01/13/2016-01-13-Android库的依赖管理/" class="leancloud_visitors" data-flag-title="Android库项目的依赖管理">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
+          </div>
         </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          <p>当android开发者针对他们的项目选择library时，他们不仅仅关注功能，易用性，性能，文档，技术支持。他们也很关心library的size和增加项目方法的数量，随着项目的增长，它的依赖也一样（在增长），开发者对保持他的App的方法数在65k限制以下感到压力。等待non-release builds的Proguard（混淆器）太慢,开发者试图避免瘟疫一样multidex。这就是为什么library作者认为他们的项目的大小很重要。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/01/13/2016-01-13-Android库的依赖管理/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -755,6 +512,14 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/02/05/2016-01-20-android-开发文化QualityMatter/"
+           data-title="Android 开发文化quality matters" data-url="http://yoursite.com/2016/02/05/2016-01-20-android-开发文化QualityMatter/">
+      </div>
+    
+  </div>
+
 
         </div>
         
@@ -774,8 +539,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.png"
@@ -825,6 +599,17 @@
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Android-开发文化"><span class="nav-number">1.</span> <span class="nav-text">Android 开发文化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#尽快失败，尽早失败（Fail-fast，fail-early）"><span class="nav-number">1.1.</span> <span class="nav-text">尽快失败，尽早失败（Fail fast，fail early）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pull-Requests，代码审查（Code-Review-持续集成（Continuous-Integration）"><span class="nav-number">1.2.</span> <span class="nav-text">Pull Requests，代码审查（Code Review),持续集成（Continuous Integration）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码质量（Code-quality）"><span class="nav-number">1.3.</span> <span class="nav-text">代码质量（Code quality）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#静态代码-资源分析（Static-Code-Resources-Analysis）"><span class="nav-number">1.4.</span> <span class="nav-text">静态代码/资源分析（Static Code/Resources Analysis）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#单元测试"><span class="nav-number">1.5.</span> <span class="nav-text">单元测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码覆盖率（Code-Coverage）"><span class="nav-number">1.6.</span> <span class="nav-text">代码覆盖率（Code Coverage）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#功能测试（Functional-UI-tests）"><span class="nav-number">1.7.</span> <span class="nav-text">功能测试（Functional (UI) tests）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集成测试"><span class="nav-number">1.8.</span> <span class="nav-text">集成测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#开发者设置菜单-aka-Debug-Drawer"><span class="nav-number">1.9.</span> <span class="nav-text">开发者设置菜单 (aka Debug Drawer)</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
       
 
     </div>
@@ -928,6 +713,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
 
   
 

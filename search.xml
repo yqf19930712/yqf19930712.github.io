@@ -1,0 +1,714 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+    
+    <entry>
+      <title><![CDATA[深入浅出ConstraintLayout（约束布局）：Part1]]></title>
+      <url>http://yoursite.com/2016/09/02/2016-8-20-%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAConstraintLayout%EF%BC%9Apart1/</url>
+      <content type="html"><![CDATA[<blockquote>
+<p>ConstraintLayout和布局编辑器工具目前是预览版本。本文内容是基于 <code>constraint-layout:1.0.0-alpha4</code>的代码和行为。在最终版本的工具中这些行为可能会改变。</p>
+</blockquote>
+<p>谷歌I/O 2016年宣布了提高布局体验的新工具和库来构建Android应用程序，Android stuido已经嵌入了基于约束的可视化布局编辑器，和运行时解释这些约束的<code>ConstraintLayout</code>新容器。</p>
+<p>本文重点解释<code>ConstraintLayout</code>容器的结构和它是如何工作的，新的Android stuido布局编辑器的功能是为开发者更容易管理<code>ConstraintLayout</code>容器强大和灵活的特性而设计的。深入理解<code>ConstraintLayout</code>,我们将能更好地使用开发工具。</p>
+<blockquote>
+<p><code>ConstraintLayout</code>作为一个非捆绑支持库发布，因此你会在本文看到许多XML属性以<code>app:</code>为前缀而非<code>android:</code>:因为它们都来自本地包命名空间。</p>
+</blockquote>
+<p>让我们从定义约束是什么开始…</p>
+<a id="more"></a>
+<h2 id="约束类型"><a href="#约束类型" class="headerlink" title="约束类型"></a>约束类型</h2><p>在上面google页面的链接中，一个放置在<code>view</code>的约束是 “ 描述<code>view</code>相对于布局中其他元素应该如何在屏幕上放置（a description of how that <code>view</code> should be positioned on the screen relative to other elements in the layout) ” ，换句话说，约束连接着<code>view</code>上的一个点（称为锚点）到某种目标，目标可以是：</p>
+<ul>
+<li>一个兄弟<code>view</code>上关系锚点</li>
+<li>一个父容器上关系锚点</li>
+<li>基准线(后面详细讨论)</li>
+</ul>
+<p>每个<code>view</code>支持以下锚点作为一个约束的源或目标:</p>
+<ul>
+<li>Top, Bottom, Left, and Right (or Start and End)</li>
+<li>CenterX and CenterY</li>
+<li>Baseline (text-based <code>view</code>s only)</li>
+</ul>
+<p>在XML中,约束采取以下形式:</p>
+<p><code>layout_constraint[SourceAnchor]_[TargetAnchor]=&quot;[TargetId]&quot;</code></p>
+<p>例如,在的@<code>id/button_cancel</code>结束和<code>@id/button_next</code>起始之间的约束看起来像:</p>
+<pre><code>&lt;Button
+  android:id=&quot;@+id/button_cancel&quot;
+  …​ /&gt;
+
+&lt;Button
+  android:id=&quot;@+id/button_next&quot;
+  app:layout_constraintStart_toEndOf=&quot;@+id/button_cancel&quot;
+  …​ /&gt;
+</code></pre><p>在可视化布局编辑器中,当你通过一个箭头连接两个<code>view</code>来表示约束,工具简单地添加XML到文件。这里有一个更完整一些ConstraintLayout XML的例子:</p>
+<pre><code>&lt;android.support.constraint.ConstraintLayout
+  xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+  xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;
+  xmlns:tools=&quot;http://schemas.android.com/tools&quot;
+  android:id=&quot;@+id/constraintLayout&quot;
+  android:layout_width=&quot;match_parent&quot;
+  android:layout_height=&quot;match_parent&quot;&gt;
+
+  &lt;Button
+    android:id=&quot;@+id/button_cancel&quot;
+    android:layout_width=&quot;wrap_content&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    app:layout_constraintStart_toStartOf=&quot;@+id/constraintLayout&quot;
+    android:layout_marginStart=&quot;16dp&quot;
+    app:layout_constraintBottom_toBottomOf=&quot;@+id/constraintLayout&quot;
+    android:layout_marginBottom=&quot;16dp&quot; /&gt;
+
+  &lt;Button
+    android:id=&quot;@+id/button_next&quot;
+    android:layout_width=&quot;wrap_content&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    app:layout_constraintStart_toEndOf=&quot;@+id/button_cancel&quot;
+    android:layout_marginStart=&quot;16dp&quot;
+    app:layout_constraintBottom_toBottomOf=&quot;@+id/constraintLayout&quot;
+    android:layout_marginBottom=&quot;16dp&quot;/&gt;
+
+&lt;/android.support.constraint.ConstraintLayout&gt;
+</code></pre><p><img src="http://wiresareobsolete.com/wp-content/uploads/2016/07/SimpleButtons.png" alt="simpleButtons.png"></p>
+<p>在这个例子中，我们有一些约束是相对父容器调整button <code>view</code>。正如我们之前看到的他们采用相同的格式,但目标是ConstraintLayout实例的id。</p>
+<blockquote>
+<p>约束总是通过android:id关联目标。如果添加约束的<code>view</code>没有id属性,为了创建约束，Android Studio布局编辑器将为您创建一个。</p>
+</blockquote>
+<p>您可能还注意到从最后一个例子,<code>ConstraintLayout</code>支持<code>margins</code>。默认情况下,两个<code>view</code>之间的约束将被解释为使<code>view</code>立即相邻。如果你想使它们之间有间距，<code>margins</code>是必需的。</p>
+<p>听起来和<code>RelativeLayout</code>相当像，是不是？</p>
+<h2 id="约束偏移"><a href="#约束偏移" class="headerlink" title="约束偏移"></a>约束偏移</h2><p>当一个<code>view</code>被相同轴的两侧同时约束，它将默认均分两个目标锚点间的距离。下面的XML是在父容器中心一个按钮:</p>
+<pre><code>&lt;android.support.constraint.ConstraintLayout
+  xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+  xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;
+  xmlns:tools=&quot;http://schemas.android.com/tools&quot;
+  android:id=&quot;@+id/constraintLayout&quot;
+  android:layout_width=&quot;match_parent&quot;
+  android:layout_height=&quot;match_parent&quot;&gt;
+
+  &lt;Button
+    android:layout_width=&quot;wrap_content&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    android:id=&quot;@+id/button&quot;
+    app:layout_constraintTop_toTopOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintBottom_toBottomOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintStart_toStartOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintEnd_toEndOf=&quot;@+id/constraintLayout&quot; /&gt;
+
+&lt;/android.support.constraint.ConstraintLayout&gt;
+</code></pre><p><img src="http://wiresareobsolete.com/wp-content/uploads/2016/07/CenteredButton.png" alt="CenteredButton.png"></p>
+<p>这是一个不错的功能,但ConstraintLayout用偏移这个概念填上这个缺口。偏移施加<code>weight</code>因子于这对约束，达到非均分空间。例如:</p>
+<pre><code>&lt;android.support.constraint.ConstraintLayout
+  xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+  xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;
+  xmlns:tools=&quot;http://schemas.android.com/tools&quot;
+  android:id=&quot;@+id/constraintLayout&quot;
+  android:layout_width=&quot;match_parent&quot;
+  android:layout_height=&quot;match_parent&quot;&gt;
+
+  &lt;Button
+    android:layout_width=&quot;wrap_content&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    android:id=&quot;@+id/button&quot;
+    app:layout_constraintTop_toTopOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintBottom_toBottomOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintStart_toStartOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintEnd_toEndOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintHorizontal_bias=&quot;0.25&quot;
+    app:layout_constraintVertical_bias=&quot;0.25&quot; /&gt;
+
+&lt;/android.support.constraint.ConstraintLayout&gt;
+</code></pre><p>现在相同的按钮是以25/75的<code>weight</code>分配每个轴上的可用空间。这是更接近于LinearLayout或GridLayout中的<code>weight</code>系统。但它比它们更好,因为<code>view</code>不必为了使用<code>weight</code>而去充满的可用空间。</p>
+<blockquote>
+<p>从技术上讲,当没有偏移约束存在, 偏移值是0.5。这就是为什么默认行为是中心的<code>view</code>。</p>
+</blockquote>
+<p>你希望可以开始看到ConstraintLayout拥有强大扁平视图层次结构。它可以像任何现有的框架布局管理器,或者他们所有!</p>
+<h2 id="关联基准线"><a href="#关联基准线" class="headerlink" title="关联基准线"></a>关联基准线</h2><p>一般情况下,视图需要一个任意的锚点对齐,ConstraintLayout支持基准线。基准线实际上是<code>view</code>的一个子类,添加到布局就像任何其他的孩子。<code>view</code>有一些特殊的属性:</p>
+<ol>
+<li>它们的测量大小总为0</li>
+<li>它们强制自己的可见性为<code>View.GONE</code></li>
+</ol>
+<p>因此,尽管它们作为<code>view</code>存在容器,他们在布局从不占空间。它们存在纯粹为了提供基准线属性而定义一个水平或垂直锚给其他<code>view</code>。让我们来看一个例子:</p>
+<pre><code>&lt;android.support.constraint.ConstraintLayout
+  xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+  xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;
+  xmlns:tools=&quot;http://schemas.android.com/tools&quot;
+  android:id=&quot;@+id/constraintLayout&quot;
+  android:layout_width=&quot;match_parent&quot;
+  android:layout_height=&quot;match_parent&quot;&gt;
+
+  &lt;android.support.constraint.Guideline
+    android:layout_width=&quot;wrap_content&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    android:id=&quot;@+id/guideline&quot;
+    android:orientation=&quot;vertical&quot;
+    app:layout_constraintGuide_begin=&quot;72dp&quot; /&gt;
+
+  &lt;Button
+    android:id=&quot;@+id/button_cancel&quot;
+    android:layout_width=&quot;wrap_content&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    app:layout_constraintStart_toStartOf=&quot;@+id/guideline&quot;
+    app:layout_constraintTop_toTopOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintBottom_toBottomOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintVertical_bias=&quot;0.25&quot; /&gt;
+
+  &lt;Button
+    android:id=&quot;@+id/button_next&quot;
+    android:layout_width=&quot;wrap_content&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    app:layout_constraintStart_toStartOf=&quot;@+id/guideline&quot;
+    app:layout_constraintTop_toTopOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintBottom_toBottomOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintVertical_bias=&quot;0.75&quot; /&gt;
+
+&lt;/android.support.constraint.ConstraintLayout&gt;
+</code></pre><p><img src="http://wiresareobsolete.com/wp-content/uploads/2016/07/GuidelineButton.png" alt="GuidelineButton.png"></p>
+<p>在距容器起始72dp的位置设置一个垂直的基准线，每个按钮现在可以使用基准线作为它<code>constraintStart</code>目标相同的任意点边缘对齐，<br>基准线可以有三种属性:</p>
+<ul>
+<li><code>layout_constraintGuide_begin</code>: 从起始边缘的绝对距离</li>
+<li><code>layout_constraintGuide_end</code>: 从结束边缘的绝对距离</li>
+<li><code>layout_constraintGuide_Percent</code>:从起始边缘的百分比距离</li>
+</ul>
+<p>从约束的角度来看,一个基准线是一个有效的目标,对于任何锚点上找到相同的轴(水平或垂直)。因此,它还必须有一个有效的id定义。</p>
+<blockquote>
+<p>在当前α版本,有一个bug,如果基准线在XML中出现在试图引用它的<code>view</code>的后面，约束会有不正确行为。为了解决这一问题,总是先添加您的基准线(可视化编辑器)或手动将其移动到顶部的XML</p>
+</blockquote>
+<h2 id="view测量"><a href="#view测量" class="headerlink" title="view测量"></a>view测量</h2><p>到目前为止我们谈了很多关于视图放置。我想花点时间来快速讨论视图大小。<code>ConstraintLayout</code>对于<code>view</code>应用稍微不同的测量规则，超出你以前使用的。有三个尺寸的定义,可以适用于任何子视图的宽度或高度:</p>
+<ol>
+<li><code>Exact</code>: 测量一个特定的大小(通常在dp)<ul>
+<li>设置<code>layout_width</code>或<code>layout_height</code>为非零值</li>
+</ul>
+</li>
+<li><code>Wrap Content</code>: 测量符合视图的内容<ul>
+<li>设置<code>layout_width</code>或<code>layout_height</code>为<code>wrap_content</code></li>
+</ul>
+</li>
+<li><code>Any Size</code>: 测量约束的可用空间<ul>
+<li>S设置<code>layout_width</code>或<code>layout_height</code>为0dp</li>
+</ul>
+</li>
+</ol>
+<p>哇,曲线球!<code>match_parent</code>怎么了? !<code>ConstraintLayout</code>不支持它,我稍后会解释为什么。简短的版本是<code>Any Size</code>有效地取代了<code>match_parent</code>用例的方式更好的遵循的约束。</p>
+<blockquote>
+<p>任何试图在可视化布局编辑器添加给<code>view</code>添加<code>match_parent</code>的将被覆盖,如果你够狡猾的从XML添加，结果将产生非常尴尬的内容<code>gravity</code>和<code>positioning</code>。不要使用它。</p>
+</blockquote>
+<p>使用<code>Any Size</code>,我们可以要求视图拉伸轴方向附加约束。另一个例子可能吗?</p>
+<pre><code>&lt;android.support.constraint.ConstraintLayout
+  xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+  xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;
+  xmlns:tools=&quot;http://schemas.android.com/tools&quot;
+  android:id=&quot;@+id/constraintLayout&quot;
+  android:layout_width=&quot;match_parent&quot;
+  android:layout_height=&quot;match_parent&quot;&gt;
+
+  &lt;Button
+    android:id=&quot;@+id/button_cancel&quot;
+    android:layout_width=&quot;wrap_content&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    app:layout_constraintStart_toStartOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintTop_toTopOf=&quot;@+id/constraintLayout&quot;/&gt;
+
+  &lt;Button
+    android:id=&quot;@+id/button_next&quot;
+    android:layout_width=&quot;0dp&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    app:layout_constraintStart_toEndOf=&quot;@+id/button_cancel&quot;
+    app:layout_constraintEnd_toEndOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintTop_toTopOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintBottom_toBottomOf=&quot;@+id/constraintLayout&quot; /&gt;
+
+&lt;/android.support.constraint.ConstraintLayout&gt;
+</code></pre><p><img src="http://wiresareobsolete.com/wp-content/uploads/2016/07/AnySizeButton.png" alt="AnySizeButton.png"></p>
+<p>通过设置<code>layout_width</code>为0dp,第二个按钮填充第一个按钮的结束和父容器的结束的空间。这也是类似于当前框架行为的<code>weight</code>,但使用了一个更灵活的方式。</p>
+<h2 id="One-More-Thing"><a href="#One-More-Thing" class="headerlink" title="One More Thing"></a>One More Thing</h2><p>一个常见的UI布局任务是以特定的宽高比测量<code>view</code>。这是非常常见的图片,无论是广场(1:1),4:3,16:9的,或者更多的自定义。<code>ConstraintLayout</code>,你将不再需要创建一个定制的视图<code>view</code>或<code>ViewGroup</code>的子类，感谢layout_constraintDimensionRatio。</p>
+<p>该功能需要<code>view</code>的一个的尺寸是“已知的”(固定尺寸或<code>wrap_content</code>)和另一个是<code>Any Size</code>(0 dp)。“<code>Any Size</code>尺寸将测量保持适当的比例通过约束设置。</p>
+<pre><code>&lt;ImageView
+    android:layout_width=&quot;0dp&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    android:src=&quot;@drawable/water&quot;
+    app:layout_constraintDimensionRatio=&quot;16:9&quot;
+    app:layout_constraintLeft_toLeftOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintTop_toTopOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintRight_toRightOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintBottom_toBottomOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintVertical_bias=&quot;0.0&quot; /&gt;
+
+  &lt;ImageView
+    android:layout_width=&quot;0dp&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    android:src=&quot;@drawable/grass&quot;
+    app:layout_constraintDimensionRatio=&quot;4:3&quot;
+    app:layout_constraintLeft_toLeftOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintRight_toRightOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintBottom_toBottomOf=&quot;@+id/constraintLayout&quot; /&gt;
+
+  …​
+
+&lt;/android.support.constraint.ConstraintLayout&gt;
+</code></pre><p>对不起<code>SquareImageView</code> <code>AspectImageView</code>,我们不需要你了…</p>
+<h2 id="接下来是什么"><a href="#接下来是什么" class="headerlink" title="接下来是什么?"></a>接下来是什么?</h2><p>希望你现在对<code>ConstraintLayout</code>能干什么有一个扎实的理解，即使你没有依靠布局编辑器工具，一旦理解了语法，约束生成的XML非常简单和直观的。</p>
+<p>在下一篇文章中,我们将关注<code>ConstraintLayout</code>如何处理所有这些约束来设置视图位置和大小。我们将深入其实现来理解运行时测量和布局策略。</p>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Android 开发文化quality matters]]></title>
+      <url>http://yoursite.com/2016/02/05/2016-01-20-android-%E5%BC%80%E5%8F%91%E6%96%87%E5%8C%96QualityMatter/</url>
+      <content type="html"><![CDATA[<p>Android 开发有问题（在过去的7年）。大多数项目没有测试（单元，集成，功能); 编译器和lint的警告被忽视; 代码像臭的意大利面条。</p>
+<p>坏消息: Google从一开始就参与这样的Android开发文化。</p>
+<blockquote class="blockquote-center"><p>perfmatters VS qualitymatters</p>
+</blockquote>
+<p>是的，google 关心perfmatters，但是qualitymatters更重要并且应该优先考虑。</p>
+<blockquote>
+<p>Optimization without a good level of code quality is a kind of premature optimization，premature optimization is also known as the root of all evil (not in all situations，but mostly it is evil)。</p>
+</blockquote>
+<p>好消息: 公司像Square，SoundCloud，Twitter和一些开发者通过做演讲，写博客使Android 开发更好，非常感谢他们。同时，谷歌终于对提高Android应用程序质量感兴趣: 在 AndroidDevSummit 和其他近期会议我们看见关于测试的内容，请继续保持!</p>
+<p><strong>是时候搞定Android开发了</strong>。<br><a id="more"></a></p>
+<h2 id="Android-开发文化"><a href="#Android-开发文化" class="headerlink" title="Android 开发文化"></a>Android 开发文化</h2><h3 id="尽快失败，尽早失败（Fail-fast，fail-early）"><a href="#尽快失败，尽早失败（Fail-fast，fail-early）" class="headerlink" title="尽快失败，尽早失败（Fail fast，fail early）"></a><strong>尽快失败，尽早失败（Fail fast，fail early</strong>）</h3><p>为什么?–因为如果你能在集成到用户产品之前发现问题—-你应该那样做。这个文档的每一项都遵守这个原则。</p>
+<h3 id="Pull-Requests，代码审查（Code-Review-持续集成（Continuous-Integration）"><a href="#Pull-Requests，代码审查（Code-Review-持续集成（Continuous-Integration）" class="headerlink" title="Pull Requests，代码审查（Code Review),持续集成（Continuous Integration）"></a><strong>Pull Requests，代码审查（Code Review),持续集成（Continuous Integration）</strong></h3><p>项目应该在版本控制系统下开发，开发过程应该发生通过Pull Requests进行<br>代码审查，没有什么应该被直接推到主分支，每个PR应该在持续集成系统触发build项目活动。 build应该是可复制的，团队中的每个成员能方便的build项目。</p>
+<p>尽早失败：如果一个PR在CI上build失败–这个PR不应该到被修复。</p>
+<h3 id="代码质量（Code-quality）"><a href="#代码质量（Code-quality）" class="headerlink" title="代码质量（Code quality）"></a><strong>代码质量（Code quality）</strong></h3><p>你的代码应该是<a href="https://en。wikipedia。org/wiki/SOLID_(object-oriented_design" target="_blank" rel="external">SOLID</a>，或者接近SOLID。这完全是取决于你如何实现这一点。这不仅是 <a href="https://en。wikipedia。org/wiki/Model–view–presenter" target="_blank" rel="external">MVP</a>/<a href="https://en。wikipedia。org/wiki/Model–view–viewmodel" target="_blank" rel="external">MVVM</a>/<a href="https://en。wikipedia。org/wiki/Model–view–controller" target="_blank" rel="external">MVC</a>/等，而且是在你应用每部分的每段代码。宁愿写<a href="https://en。wikipedia。org/wiki/Pure_function" target="_blank" rel="external">纯函数</a>和<a href="https://en。wikipedia。org/wiki/Immutable_object" target="_blank" rel="external">不变对象</a>。</p>
+<p>尽早失败：不要只成为在项目中写可维护代码的开发者，也要确定其他人写好的代码（和他们聊聊，讨论这个文档，督促他们）－在代码审查阶段阻止坏的代码。</p>
+<h3 id="静态代码-资源分析（Static-Code-Resources-Analysis）"><a href="#静态代码-资源分析（Static-Code-Resources-Analysis）" class="headerlink" title="静态代码/资源分析（Static Code/Resources Analysis）"></a><strong>静态代码/资源分析</strong>（Static Code/Resources Analysis）</h3><p>分析允许你在你集成到产品之前找到你代码中的问题。 另一方面它有助于代码审查。</p>
+<p>Android Lint，FindBugs，PMD，SonarQube，FB Infer，etc。</p>
+<p>尽早失败:在CI期间运行静态分析器并配置它在项目有警告（不止是错误）的情况下 build 失败。</p>
+<h3 id="单元测试"><a href="#单元测试" class="headerlink" title="单元测试"></a><strong>单元测试</strong></h3><p>是的，测试，单元测试通常检查函数／对象是否正常地工作，在你项目中越多测试和高代码覆盖率–你给用户的产品就更好更稳定。事实上，绝大多数简单的bugs可以通过单元测试找到，并且当然你的应用有数据处理–单元测试会帮助你确定你的代码是否正确工作。</p>
+<p>一个简短的Android项目单元测试指南:</p>
+<ul>
+<li>试着在JVM上运行单元测试因为这样比在设备／虚拟机上运行快的多。</li>
+<li>Android Gradle Plugin能在JVM上运行单元测试。 只要把你的测试代码放在test／<code>java_or_other_lang</code>。</li>
+<li>你可以从IDE（在test右击并执行run）运行测试或者在Terminal执行<code>。/gradlew test</code></li>
+<li>你很快认识到如果在JVM运行你的使用Android SDK类的单元测试，Android SDK类是不存在并且会抛出异常。这是悲伤但可以解决的。你可以在Robolectric test runner 下运行需要Android SDK的测试，Robolectrie会提供你工作的大多数Android SDK类的实现。</li>
+<li>JUnit 提供好的运行器和相当好的规则概念，但是JUnit断言很糟糕，你可以通过AssertJ，Truth等使用更好的断言并且在JUnit(or TestNG/Spock/etc)下面运行</li>
+<li>如果你需要检查行为并且Mock一些对象－你可以使用像Mockito这样的mocking库<blockquote>
+<p>测试驱动开发或别的－由你决定，但是当然要试一试。 </p>
+</blockquote>
+</li>
+</ul>
+<p>尽早失败:在CI期间运行单元测试，当一些测试失败时则 build 失败。 </p>
+<h3 id="代码覆盖率（Code-Coverage）"><a href="#代码覆盖率（Code-Coverage）" class="headerlink" title="代码覆盖率（Code Coverage）"></a><strong>代码覆盖率</strong>（Code Coverage）</h3><p>一旦你开始编写单元测试你需要知道你的代码覆盖率是否足够好。 你可以使用像Jacoco这样的工具检查测试所覆盖的代码路径。 如果你测试代码的行为取决于一些条件，代码覆盖率是特别有用，并且你需要确保所有可能的变体代码执行的检查。</p>
+<p>你可以启用Jacoco通过apply plugin: ‘jacoco’。 你可以通过Gradle task配置应该检查的类/包。</p>
+<p>如果覆盖率不够高，配置代码覆盖率的工具使build失败。 如果你在一个现有的项目开始单元测试-排除没有测试的类-一旦你用测试覆盖它们然后把它们从排除列表移除。 这个规则会帮助你确定新代码覆盖的足够好。 你可以使用jacoco-coverage插件根据覆盖率报告使build失败。</p>
+<p>尽早失败: 如果代码覆盖率不够广，则 build 失败，确定在CI期间检查代码覆盖率。</p>
+<h3 id="功能测试（Functional-UI-tests）"><a href="#功能测试（Functional-UI-tests）" class="headerlink" title="功能测试（Functional (UI) tests）"></a><strong>功能测试</strong>（Functional (UI) tests）</h3><p>是的。 更多测试。 功能测试是从用户角度检查你应用的功能。 功能测试启动你的应用并且验证你核心的特性是否正确工作。 例如加载数据在UI显示等等。 你的QA团队来做大部分工作能通过功能测试自动化，但这并不意味着你不需要QA团队。</p>
+<p>这里有两种运行功能测试的普通方法。 你可以在 Android Instrumentation 或 UIAutomator下运行它们。 主要的不同是在Android Instrumentation 下的测试只能在你的应用下面工作，它们可以接触到你的代码等等。 在 UIAutomator下的测试运行在系统进程并可以通过可用API（比 Android Instrumentation的能力更有限）与你的应用交互。 如果你需要测试你应用与其它应用的交互－你可以使用UIAutomator，但是通常你可以模拟这样的交互并且通过 Android Instrumentation测试它们，你的测试不会依赖外部因素</p>
+<p>建议:</p>
+<ul>
+<li>使用 Android Instrumentation 和 Espresso。</li>
+<li>面向页面架构的测试会帮助你写和维护测试更容易，更快（i。e。 当你有一个描述你应用中屏幕或部分屏幕页面类）</li>
+<li>模拟与后端的交互，它会使你的测试完全独立，并且你能并行的运行测试 ，并确信你在测试之间没有共享状态，在这里 MockWebServer 是一个好的助手</li>
+<li>开发者应该写功能测试，是的</li>
+<li>教你的QA团队写功能测试－通常QAs思考不同并且知道哪种情况需要被检查</li>
+<li>检查功能测试的代码覆盖率</li>
+</ul>
+<p>尽早失败:在CI期间运行功能测试，当一些测试失败时则 build 失败。</p>
+<h3 id="集成测试"><a href="#集成测试" class="headerlink" title="集成测试"></a><strong>集成测试</strong></h3><p>是的。 更多测试。 通常，集成测试检查你的组件在一起工作的时候有什么不同:HTTP layer，REST API layer，Execution layer (RxJava，etc)等等。 </p>
+<p>想象你有一个类使用了一组其它类并且从后台加载数据，接下来处理它并且储存在数据库，你应该用单元测试覆盖每个类，但是你也能用集成覆盖如此复杂的组合。</p>
+<p>这里与单元测试的主要不同是你不需要模拟对象，而是测试中真的实现对象。你可以模拟数据传递和数据库状态然后运行真实代码来看它会如何做它的工作。</p>
+<p>你可以在设备/虚拟机在 Android Instrumentation下运行集成测试或者在JVM作为单元测试的部分，因为测试在JVM上运行的更快－使用JVM。</p>
+<p>尽早失败:在CI期间运行集成测试，当一些测试失败时则 build 失败。</p>
+<h3 id="开发者设置菜单-aka-Debug-Drawer"><a href="#开发者设置菜单-aka-Debug-Drawer" class="headerlink" title="开发者设置菜单 (aka Debug Drawer)"></a><strong>开发者设置菜单</strong> (aka Debug Drawer)</h3><p>你调试build时这种菜单允许你enable/disable工具像 <a href="http://facebook。github。io/stetho/" target="_blank" rel="external">Stetho</a>，<a href="https://github。com/square/leakcanary" target="_blank" rel="external">LeakCanary</a>，<a href="https://github。com/brianPlummer/TinyDancer" target="_blank" rel="external">TinyDancer</a>，模拟/改变应用的一些行为等等。</p>
+<p>在运行中不需要修改代码来改变和检查应用的能力会节省你和QA团队成吨的时间。</p>
+<p>尽早失败：像 LeakCanary 的工具会帮助你在你的分析系统中从真实用户接收到崩溃报告之前探测问题，在每次发布之前教你的QA团队使用这种工具作为可接受测试的一部分。</p>
+<blockquote>
+<p>请考虑你的开发文化，和你的团队成员讨论这个主题，你的开发过程和你build产品的质量会有显著的提高!</p>
+</blockquote>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Dagger2依赖注入]]></title>
+      <url>http://yoursite.com/2016/01/25/2016-1-16-Dagger2-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/</url>
+      <content type="html"><![CDATA[<p>许多android应用实例化对象经常要求其他依赖，举个例子，实例化twitter API client使用网络（retrofit），为了使用这个库，你也许需要加入解析库（Gson），另外，实现认证或缓存也许需要shared preference 或其他普通存储的类要求首先实例化它们并形成依赖链。</p>
+<p>dagger2 为你分析这些依赖并生成代码把它们串起来。尽管有其他依赖注入库，大多受限于依赖XML，要求在运行时验证依赖问题或在启动时造成性能负担。dagger 2 完全通过使用java annotation processors和编译时检查来分析和验证依赖。直到现在它被认为是最高效的依赖注入框架之一。</p>
+<a id="more"></a>
+<h2 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h2><ul>
+<li><p><strong>简化获取共享实例</strong> 就像butterknife库使定义view，事件处理，资源的引用更简单，dagger 2 提供一种获取共享实例的简单方法。例如，一旦我们在Dagger中声明你的单个实例（MyTwtterApiClient 或 SharePreferences），我们可以用@inject注释域声明：</p>
+<pre><code>public class MainActivity extends Activity {
+   @Inject MyTwitterApiClient mTwitterApiClient;
+   @Inject SharedPreferences sharedPreferences;
+
+   public void onCreate(Bundle savedInstance) {
+       // assign singleton instances to fields
+       InjectorClass.inject(this);
+
+   }      
+</code></pre></li>
+<li><strong>对于复杂依赖配置简单</strong>我们创建对象时都有潜在的顺序。dagger 2 遍历依赖图并生成容易理解和追踪的代码，通过获取引用并作为依赖传递给其他对象不但把你从手写你需要的大量模版代码中解救出来，也有助于简化重构，从此你可以致力于如何构建模型而不是关注创建它们的顺序。</li>
+<li>使单元测试和集成测试更简单，因为依赖图由我们创建，我们可以容易的替换网络返回模型和模拟它的行为。</li>
+<li><strong>域内实例</strong>你不仅能更方便管理在整个应用生命周期持续的实例，你也能凭借dagger 2 的优势去定义拥有更短生命周期的实例。</li>
+</ul>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>添加依赖到<code>app/build.gradle</code>文件</p>
+<pre><code>dependencies { 
+    compile &apos;com.google.dagger:dagger:2.0&apos; 
+    provided &apos;com.google.dagger:dagger-compiler:2.0&apos; 
+    provided &apos;org.glassfish:javax.annotation:10.0-b28&apos; 
+}
+</code></pre><p>注意：provided 关键字引用的依赖只在编译时需要。dagger 编译器生成创建你源码中类的依赖图的代码，在编译时这些类会被加入IDE class path。</p>
+<p>android studio默认不会认为大量生成dagger 2代码为合法类，但是加入android apt 插件会添加这些文件到IDE class path 并使它们可见。</p>
+<p>在根目录的<code>build.gradle</code>添加：</p>
+<pre><code>dependencies { 
+    // other classpath definitions here 
+    classpath &apos;com.neenbedankt.gradle.plugins:android-apt:1.8&apos;
+ }
+</code></pre><p>确定在<code>app/build.gradle</code>文件中应用插件：</p>
+<pre><code>// add after applying plugin: &apos;com.android.application&apos; 
+apply plugin:&apos;com.neenbedankt.android-apt&apos;
+</code></pre><h2 id="单个实例"><a href="#单个实例" class="headerlink" title="单个实例"></a>单个实例</h2><p><img src="https://raw.githubusercontent.com/codepath/android_guides/master/images/dagger_general.png" alt="image"><br>下面最简单的例子是教你如何通过dagger集中你所有的单例创建。假设你不会用任何类型的依赖注入框架并写下twitter client 和下面一样：</p>
+<pre><code>OkHttpClient client = new OkHttpClient();
+
+// Enable caching for OkHttp
+int cacheSize = 10 * 1024 * 1024; // 10 MiB
+Cache cache = new Cache(getApplication().getCacheDir(), cacheSize);
+client.setCache(cache);
+
+// Used for caching authentication tokens
+SharedPreferences sharedPrefeences = PreferenceManager.getDefaultSharedPreferences(this);
+
+// Instantiate Gson
+Gson gson = new GsonBuilder().create();
+GsonConverterFactory converterFactory = GsonConverterFactory.create(Gson);
+
+// Build Retrofit
+Retrofit retrofit = new Retrofit.Builder()
+                                .baseUrl(&quot;https://api.github.com&quot;)
+                                .addConverterFactory(converterFactory)
+                                .client(client)  // custom client
+                                .build();
+</code></pre><h3 id="声明你的单个实例"><a href="#声明你的单个实例" class="headerlink" title="声明你的单个实例"></a>声明你的单个实例</h3><p>Declare your singletons</p>
+<p>你需要通过创建dagger 2 module定义哪些对象应该作为依赖链中的部分被包含。比如，你希望创建一个绑定应用生命周期并且我们所有的activities的fragment都可以使用的retrofit单实例，我们首先要让dagger知道retrofit实例可以被提供。</p>
+<p>因为我们希望初始化缓存，我们需要一个application context，我们第一的dagger module，AppModule，会用于提供这个引用。</p>
+<pre><code>@Module
+public class AppModule {
+
+    Application mApplication;
+
+    public AppModule(Application application) {
+        mApplication = application;
+    }
+
+    @Provides
+    @Singleton
+    Application providesApplication() {
+        return mApplication;
+    }
+}
+</code></pre><p>我们创建一个NetModule类并用@Module注释来告诉dagger搜索实例提供者的可用方法。</p>
+<p>这些实际上暴露可用的返回值类型的方法应该也被@provider修饰符注释，singleton 注释也告诉dagger编译器实例在应用中只应该创建一次。在下面了例子中，我们使用SharedPreferences ,  Gson ,  Cache ,  OkHttpClient  和  Retrofit 作为返回值类型可用作为依赖表的部分使用。</p>
+<pre><code>@Module
+public class NetModule {
+
+    String mBaseUrl;
+
+    // Constructor needs one parameter to instantiate. 
+    public NetModule(String baseUrl) {
+        this.mBaseUrl = baseUrl;
+    }
+
+    // Dagger will only look for methods annotated with @Provides
+    @Provides
+    @Singleton
+    // Application reference must come from AppModule.class
+    SharedPreferences providesSharedPreferences(Application application) {
+        return PreferenceManager.getDefaultSharedPreferences(application);
+    }
+
+    @Provides
+    @Singleton
+    Cache provideOkHttpCache(Application application) {
+        int cacheSize = 10 * 1024 * 1024; // 10 MiB
+        Cache cache = new Cache(application.getCacheDir(), cacheSize);
+        return cache;
+    }
+
+  @Provides
+  @Singleton
+  Gson provideGson() { 
+      GsonBuilder gsonBuilder = new GsonBuilder();
+      gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+      return gsonBuilder.create();
+  }
+
+  @Provides
+  @Singleton
+  OkHttpClient provideOkHttpClient(Cache cache) {
+      OkHttpClient client = new OkHttpClient();
+      client.setCache(cache);
+      return client;
+  }
+
+  @Provides
+  @Singleton
+  Retrofit provideRetrofit(Gson gson, OkHttpClient okHttpClient) {
+      Retrofit retrofit = new Retrofit.Builder()
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .baseUrl(mBaseUrl)
+                .client(okHttpClient)
+                .build();
+        return retrofit;
+    }
+}
+</code></pre><p>注意方法名无关紧要它们可以命名成任何名字。被@provider修饰符注释的返回值类型用于连接这个实例和任何其他同样类型的模型。@sigleton注释用于告诉dagger只会被初始化一次在应用的整个生命周期。</p>
+<p>retrofit实例依赖son和okhttpclient实例，因此我们可以在这个类中定义接受这两种类型的参数的方法，方法中@provider注释和这两个参数会使dagger 构建retrofit实例依赖son和okhhtpclient。</p>
+<h3 id="定义注入目标"><a href="#定义注入目标" class="headerlink" title="定义注入目标"></a>定义注入目标</h3><p>Define injection targets</p>
+<p>dagger 提供一种方法，在 activities, fragments, or services 的被赋值引用的域中注释@inject 并调用inject（）方法。调用inject（）会使dagger 2 在依赖图定位一个匹配返回值类型的实例。如果找到一个，他就会被赋值给对应的域。比如，在下面实例中，dagger会试图寻找返回MyTwitterApiClient 和 SharedPreferences类型的provider。</p>
+<pre><code>public class MainActivity extends Activity {
+  @Inject MyTwitterApiClient mTwitterApiClient;
+  @Inject SharedPreferences sharedPreferences;
+
+  public void onCreate(Bundle savedInstance) {
+      // assign singleton instances to fields
+      InjectorClass.inject(this);
+  }
+}
+</code></pre><p>dagger 2 中使用的注入器 class 叫 component，为了定义一个实例之前访问它，componet会在我们的 activities, services, or fragments赋值其引用，我们需要在component class注释@component声明 ，注意activities, services, or fragments在component应该被独立的方法中声明</p>
+<pre><code>@Singleton
+@Component(modules={AppModule.class, NetModule.class})
+public interface NetComponent {
+  void inject(MainActivity activity);
+  // void inject(MyFragment fragment);
+  // void inject(MyService service);
+}
+</code></pre><p>注意基类作为注入目标是不充分的。dagger 2依赖强类型的类，所以你必须显示指出注入目标类(There are suggestions to workaround the issue, but the code to do so may be more complicated to trace than simply defining them.)。</p>
+<h3 id="代码生成"><a href="#代码生成" class="headerlink" title="代码生成"></a>代码生成</h3><p>dagger 2 重要的一面是library生成被@component注释的类的代码，你可以使用以Dagger_开头的类，它会响应实例化我们依赖图中的一个实例并使用它对注释@inject的域执行注入。检查 setup guide并确信你已经加入android apt 插件，它会允许你更好的理解dagger2生成的类。</p>
+<h3 id="实例化component"><a href="#实例化component" class="headerlink" title="实例化component"></a>实例化component</h3><p>我们应该在Application类中执行这个工作，因为这些实例应该在应用的整个生命周期中声明一次：</p>
+<pre><code>public class MyApp extends Application {
+
+    private NetComponent mNetComponent;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        // specify the full namespace of the component
+        // Dagger_xxxx (where xxxx = component name)
+        mNetComponent = com.codepath.dagger.components.DaggerNetComponent.builder()
+                // list of modules that are part of this component need to be created here too
+                .appModule(new AppModule(this))
+                .netModule(new NetModule(&quot;https://api.github.com&quot;))
+                .build();
+
+        // If a Dagger 2 component does not have any constructor arguments for any of its modules,
+        // then we can use .create() as a shortcut instead:
+        //  mAppComponent = com.codepath.dagger.components.DaggerNetComponent.create();
+    }
+
+    public NetComponent getNetComponent() {
+      return mNetComponent;
+    }
+}
+</code></pre><p>因为我们覆盖了默认的Application类，我们也要修改启动应用的application name，这种方法你的应用会使用你的application 类来初始化实例。</p>
+<pre><code>&lt;application
+      android:allowBackup=&quot;true&quot;
+      android:name=&quot;.MyApp&quot;&gt;
+</code></pre><p>在我们的activity中，我们需要简单的获取这些component并调用inject（）</p>
+<pre><code>public class MyActivity extends Activity {
+  @Inject OkHttpClient mOkHttpClient;
+  @Inject SharedPreferences sharedPreferences;
+
+  public void onCreate(Bundle savedInstance) {
+        // assign singleton instances to fields
+        // We need to cast to `MyApp` in order to get the right method
+        ((MyApp) getApplication()).getNetComponent()).inject(this);
+    }
+}
+</code></pre><h3 id="限定类型"><a href="#限定类型" class="headerlink" title="限定类型"></a>限定类型</h3><p>Qualified types<br><img src="https://raw.githubusercontent.com/codepath/android_guides/master/images/dagger_qualifiers.png" alt="Dagger Qualifiers"><br>如果我们需要两个不同的对象但返回值类型相同，我们可以使用@name 限定符注释。你应该定义它们在我们提供实例( @Provides  annotation)和注入它们 ( @Inject  annotations）的地方。</p>
+<pre><code>@Provides @Named(&quot;cached&quot;)
+@Singleton
+OkHttpClient provideOkHttpClient(Cache cache) {
+    OkHttpClient client = new OkHttpClient();
+    client.setCache(cache);
+}
+
+@Provides @Named(&quot;non_cached&quot;) @Singleton
+OkHttpClient provideOkHttpClient() {
+    OkHttpClient client = new OkHttpClient();
+    return client;
+}
+</code></pre><p>注入也会要求注释</p>
+<pre><code>@Inject @Named(&quot;cached&quot;) OkHttpClient client;
+@Inject @Named(&quot;non_cached&quot;) OkHttpClient client2;
+</code></pre><p>@name 由dagger预定义的限定符，你也可以创建你自己的限定符注释</p>
+<pre><code>@Qualifier
+@Documented
+@Retention(RUNTIME)
+public @interface DefaultPreferences {
+}
+</code></pre><h3 id="域"><a href="#域" class="headerlink" title="域"></a>域</h3><p>Scopes<br><img src="https://raw.githubusercontent.com/codepath/android_guides/master/images/dagger_scopes.png" alt="Dagger Scopes"><br>域（Scope） 注释使dagger持有给定component提供对象的单个实例，没有域的提供者方法在任何给定类型被注入的时间都会被调用创建一个新对象</p>
+<p>@singleton 是 由dagger定义的域（Scope）注释，你也可以在你的应用中定义无数域（Scope）注释</p>
+<pre><code>@Scope
+@Documented
+@Retention(value=RUNTIME)
+public @interface MyActivityScope
+</code></pre><h3 id="Component依赖"><a href="#Component依赖" class="headerlink" title="Component依赖"></a>Component依赖</h3><p>Component Dependencies<br><img src="https://raw.githubusercontent.com/codepath/android_guides/master/images/dagger_dependency.png" alt="Dagger Component Dependencies"><br>上面例子展示了我们使用持续应用整个生命周期的单实例。我们也依赖一个主要dagger componet。如果我们希望有多个不需要一直存在于内存的component （绑定 activity 或 fragment，甚至绑定用户登录状态 ），我们能创建依赖组件，当我们使用依赖组件有下面几点考虑</p>
+<ul>
+<li>两个依赖组件不能分享相同域（scope）比如，两个不同的组件不能同时被@singleton注释，这个规定被强行执行因为 here。依赖组件需要定义自己的域</li>
+<li>尽管dagger 2 有创建域实例的能力，但是其责任需要你创建和删除引用与目标行为一致。dagger 2并不知道关于下层的任何实现。</li>
+<li><p>当创建依赖组件时，父组件需要显示暴露对象给下游对象，比如，如果下游组件需要获取retrofit实例，component需要显式通过对应的返回值类型暴露它</p>
+<pre><code>@Singleton
+@Component(modules={AppModule.class, NetModule.class})
+public interface NetComponent {
+    // downstream components need these exposed with the return type
+    // method name does not really matter
+    Retrofit retrofit();
+}
+</code></pre></li>
+</ul>
+<p>比如，如果我们在应用内部使用依赖组件创建用于用户登录链接生命周期，我们可以定义自己的UserScope 接口</p>
+<pre><code>import java.lang.annotation.Retention;
+import javax.inject.Scope;
+
+@Scope
+public @interface UserScope {
+}
+</code></pre><p>我们可以作为子组件</p>
+<pre><code>@UserScope // using the previously defined scope, note that @Singleton will not work
+@Component(dependencies = NetComponent.class, modules = GitHubModule.class)
+public interface GitHubComponent {
+    void inject(MainActivity activity);
+}
+</code></pre><p>假设 这个github module 简单返回一个github api接口</p>
+<pre><code>@Module
+public class GitHubModule {
+
+    public interface GitHubApiInterface {
+      @GET(&quot;/org/{orgName}/repos&quot;)
+      Call&lt;ArrayList&lt;Repository&gt;&gt; getRepository(@Path(&quot;orgName&quot;) String orgName);
+    }
+
+    @Provides
+    @UserScope // needs to be consistent with the component scope
+    public GitHubApiInterface providesGitHubInterface(Retrofit retrofit) {
+        return retrofit.create(GitHubApiInterface.class);
+    }
+}
+</code></pre><p>为了GithubModule 获取retrofit实例，我们需要在上游组件显式定义它，如果下游将要执行注入，它们也应该从上游组件移除</p>
+<pre><code>@Singleton
+@Component(modules={AppModule.class, NetModule.class})
+public interface NetComponent {
+    // remove injection methods if downstream modules will perform injection
+
+    // downstream components need these exposed
+    Retrofit retrofit();
+    OkHttpClient okHttpClient();
+    SharedPreferences sharedPreferences();
+}
+</code></pre><p>最后一步使用实例化GitHubComponent，此时，我们首先需要构建NetComponent并传人DaggerGitHubComponent的构造器中。</p>
+<pre><code>NetComponent netComponent = DaggerNetComponent.builder()
+                .appModule(new AppModule(this))
+                .netModule(new NetModule(&quot;https://api.github.com&quot;))
+                .build();
+
+GitHubComponent gitHubComponent = DaggerGitHubComponent.builder()
+                .netComponent(mNetComponent)
+                .gitHubModule(new GitHubModule())
+                .build();
+</code></pre><h2 id="Subcomponents"><a href="#Subcomponents" class="headerlink" title="Subcomponents"></a>Subcomponents</h2><p><img src="https://raw.githubusercontent.com/codepath/android_guides/master/images/dagger_subcomponent.png" alt="Dagger subcomponents"><br>使用 Subcomponent 是另一种扩展一个组件的对象图，有依赖，subcomponent的组件有它们自己的生命周期当所有subcomponent的引用消失时可以被gc</p>
+<p>依赖subcomponent主要不同</p>
+<ul>
+<li><p>需要在父接口被声明</p>
+</li>
+<li><p>可以获取父组件图的所有元素</p>
+</li>
+</ul>
+<p>对activity使用subcomponent的例子</p>
+<pre><code>@Module
+public class MyActivityModule {
+    private final MyActivity activity;
+    public MyActivityModule(MyActivity activity) { this.activity = activity; }
+
+    @Provides @MyActivityScope @Named(&quot;my_list&quot;)
+    public ArrayAdapter providesMyListAdapter() {
+        return new ArrayAdapter&lt;String&gt;(activity, android.R.layout.my_list);
+    }
+    ...
+}
+
+
+@MyActivityScope
+@Subcomponent(modules={ MyActivityModule.class })
+public interface MyActivitySubComponent {
+    @Named(&quot;my_list&quot;) ArrayAdapter myListAdapter();
+}
+
+@Singleton
+@Component(modules={ ... })
+public interface MyApplicationComponent {
+    MyActivitySubComponent newMyActivitySubcomponent(MyActivityModule activityModule);
+}
+</code></pre><p>在上面例子中，每次调用newMyActivitySubcomponent（）时都会创建一个subcomponent的新实例，使用subcomponent注入到activity 中</p>
+<pre><code>public class MyActivity extends Activity {
+  @Inject ArrayAdapter arrayAdapter;
+
+  public void onCreate(Bundle savedInstance) {
+        // assign singleton instances to fields
+        // We need to cast to `MyApp` in order to get the right method
+        ((MyApp) getApplication()).getApplicationComponent())
+            .newMyActivitySubcomponent(new MyActivityModule(this))
+            .inject(this);
+    }
+}
+</code></pre><h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><p><a href="https://github.com/codepath/android_guides/wiki/Dependency-Injection-with-Dagger-2#" target="_blank" rel="external">原文链接</a></p>
+<ul>
+<li><a href="http://google.github.io/dagger/" target="_blank" rel="external">Dagger 2 Github Page</a></li>
+<li><a href="https://github.com/vinc3m1/nowdothis" target="_blank" rel="external">Sample project using Dagger 2</a></li>
+<li><a href="https://docs.google.com/presentation/d/1bkctcKjbLlpiI0Nj9v0QpCcNIiZBhVsJsJp1dgU5n98/" target="_blank" rel="external">Vince Mi’s Codepath Meetup Dagger 2 Slides</a></li>
+<li><a href="http://code.tutsplus.com/tutorials/dependency-injection-with-dagger-2-on-android--cms-23345" target="_blank" rel="external">http://code.tutsplus.com/tutorials/dependency-injection-with-dagger-2-on-android--cms-23345</a></li>
+<li><a href="https://speakerdeck.com/jakewharton/dependency-injection-with-dagger-2-devoxx-2014" target="_blank" rel="external">Jake Wharton’s Devoxx Dagger 2 Slides</a></li>
+<li><a href="https://www.parleys.com/tutorial/5471cdd1e4b065ebcfa1d557/" target="_blank" rel="external">Jake Wharton’s Devoxx Dagger 2 Talk</a></li>
+<li><a href="https://www.youtube.com/watch?v=oK_XtfXPkqw" target="_blank" rel="external">Dagger 2 Google Developers Talk</a></li>
+<li><a href="http://frogermcs.github.io/dagger-1-to-2-migration/" target="_blank" rel="external">Dagger 1 to Dagger 2</a></li>
+<li><a href="http://fernandocejas.com/2015/04/11/tasting-dagger-2-on-android/" target="_blank" rel="external">Tasting Dagger 2 on Android</a></li>
+<li><a href="http://blog.sqisland.com/2015/04/dagger-2-espresso-2-mockito.html#sthash.IMzjLiVu.dpuf" target="_blank" rel="external">Dagger 2 Testing with Mockito</a></li>
+<li><a href="https://github.com/konmik/konmik.github.io/wiki/Snorkeling-with-Dagger-2" target="_blank" rel="external">Snorkeling with Dagger 2</a> </li>
+<li><a href="https://www.objc.io/issues/11-android/dependency-injection-in-java/" target="_blank" rel="external">Dependency Injection in Java</a></li>
+<li><a href="http://jellybeanssir.blogspot.de/2015/05/component-dependency-vs-submodules-in.html" target="_blank" rel="external">Component Dependency vs. Submodules in Dagger 2</a></li>
+<li><a href="https://github.com/joesteele/dagger2-component-scopes-test" target="_blank" rel="external">Dagger 2 Component Scopes Test</a></li>
+</ul>
+]]></content>
+    </entry>
+    
+    <entry>
+      <title><![CDATA[Android库项目的依赖管理]]></title>
+      <url>http://yoursite.com/2016/01/13/2016-01-13-Android%E5%BA%93%E7%9A%84%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/</url>
+      <content type="html"><![CDATA[<p>当android开发者针对他们的项目选择library时，他们不仅仅关注功能，易用性，性能，文档，技术支持。他们也很关心library的size和增加项目方法的数量，随着项目的增长，它的依赖也一样（在增长），开发者对保持他的App的方法数在65k限制以下感到压力。等待non-release builds的Proguard（混淆器）太慢,开发者试图避免瘟疫一样multidex。这就是为什么library作者认为他们的项目的大小很重要。</p>
+<a id="more"></a>
+<p>控制你的library的方法数最简单的方法是不加入任何非必需的依赖。任何library加入的依赖会传递性的加入用户的项目中。例如，如果你需要几个简单的工具方法（像关闭资源），不要为它去加入Guava依赖，自己写或从通过现有library解决。当你自需要几个工具方法并没有加入14k方法，你的用户肯定会感激你。</p>
+<p>那并不是说你应该经常避免使用外部libraries。你只需要稍加考虑，有http libraries时不要写一个http client，你应该停止浪费时间去更好的改善你的library。</p>
+<p>不考虑加入依赖的简单方法，你可以使用下面几种方法保持你library的“身材”，一种方法是声明依赖时使用 provide scope ，它属于android gradle 构建系统的一部分。对立的是compile，provide scope只会在编译时加入依赖 ，这意味着当用户们build他们的项目时依赖不会被打包到APK中。使用依赖的用户需要在他们的应用显式声明依赖。</p>
+<p>注释：也可以选择package scope，依赖会被打包到APK但编译时不可用。</p>
+<p>在你的library项目中使用可选依赖的原因：</p>
+<p>1.依赖的核心功能只会被你用户的子集用到，在Retrofit 1.x就可以看到，用户可以通过响应式的调用REST calls而不是回调，那些想使用RxJava的用户可以加入其依赖，其他用户不用负担额外依赖。 Retrofit 使用maven构建系统后配置稍有不同，但是思路是一致的。</p>
+<p>我应该警告你发现你自己加入的依赖的功能不是对所有用户都有用，你真的应该考虑依赖的功能是否应该作为你library的一部分，稍后再详细说明。</p>
+<p>2.android框架中已经存在一种解决方案，但是外部library提供一种更高效解决方案。为了更好的性能已加入外部依赖或愿意承担增长的方法数的用户可以加入依赖。</p>
+<p>最近我无意中在PlacesAutocompleteTextView library发现这种方法的应用，它内部的http client可以是okhttp client或是http url connection，前者总体来说性能更高，但是要求添加okhttp依赖。如果用户不希望添加它，他会自动回退使用标准库的http url connection。</p>
+<p>为应用此方法，由resolver（决策者）这个类在运行时决定依赖那个library。例如下面这个类来决定使用哪个http client</p>
+<pre><code>public final class PlacesHttpClientResolver { 
+    public static final PlacesHttpClient PLACES_HTTP_CLIENT; 
+    static { 
+        boolean hasOkHttp; 
+        try { 
+            Class.forName(&quot;com.squareup.okhttp.OkHttpClient&quot;);
+            hasOkHttp = true; 
+        } catch (ClassNotFoundException e) { 
+            hasOkHttp = false; 
+        } 
+        PlacesApiJsonParser parser = JsonParserResolver.JSON_PARSER;
+        PLACES_HTTP_CLIENT = hasOkHttp ? new OkHttpPlacesHttpClient(parser) : new HttpUrlConnectionMapsHttpClient(parser); 
+        } 
+    private PlacesHttpClientResolver() { throw new RuntimeException(&quot;No Instances!&quot;); } 
+}
+</code></pre><p>当类被加载，通过全路径类名检查okhttpclient的可用性，如果抛出classnotfoundexception，然后我就知道okhttp没有被用户添加，我们回退到httpurlconnection。placeshttpclient作为包装类了通过内部代码库使用所有实现中一种的接口。同样的方法可以被用到json解析，gson可以作为可选依赖。</p>
+<p>如果平衡性能和大小很重要，这种方法是不错的。一般回退的实现需要更多的精力（例如json parsing）我推荐一开始使用外部library节省时间然后考虑在后续发布版本加入回退实现。</p>
+<p>我先前提到你应该考虑你的library 包含哪个功能。如果某个功能不会被几乎所有用户所使用，最好还是不要引入它。这令第一种使用可选依赖的方法更少被采纳。再以retrofit为例，它在2.x发布版本不再提供消费响应式rest calls 作为它核心库的一部分。这一功能被移动到分离模块作为他所在的maven特性发布。</p>
+<p>同样的，不同response转换器也被分到它们自己的依赖，例如，需要转换json response 和已经依赖gson的retofit 用户可以添加下面依赖到他们的build.gradle 文件</p>
+<pre><code>dependencies {
+      compile &apos;com.squareup.retrofit:converter-gson:2.0.0-beta2&apos;
+}
+</code></pre><p>使用不同json库像jackson或需要解析不同数据格式像xml或protobuf buffers的用户可以这样做而不必负担所有服务retrofit用户的外部库。重要的一点，核心库不会被多余的功能污染，聚焦的主要观点被解决。</p>
+<p>如果你发现android开发者会使用你自己写的库，当你设计时用上这些策略。考虑你库的大小不仅仅作为附属，而是一种特性。为此你的用户会由衷的感谢你。</p>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><p><a href="http://johnpetitto.com/android-lib-dependency-management/" target="_blank" rel="external">原文链接</a></p>
+]]></content>
+    </entry>
+    
+  
+  
+</search>

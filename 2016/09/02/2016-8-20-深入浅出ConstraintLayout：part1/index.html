@@ -1,0 +1,1149 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="ConstraintLayout和布局编辑器工具目前是预览版本。本文内容是基于 constraint-layout:1.0.0-alpha4的代码和行为。在最终版本的工具中这些行为可能会改变。
+
+谷歌I/O 2016年宣布了提高布局体验的新工具和库来构建Android应用程序，Android stuido已经嵌入了基于约束的可视化布局编辑器，和运行时解释这些约束的ConstraintLayout">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入浅出ConstraintLayout（约束布局）：Part1">
+<meta property="og:url" content="http://yoursite.com/2016/09/02/2016-8-20-深入浅出ConstraintLayout：part1/index.html">
+<meta property="og:site_name" content="DreamX">
+<meta property="og:description" content="ConstraintLayout和布局编辑器工具目前是预览版本。本文内容是基于 constraint-layout:1.0.0-alpha4的代码和行为。在最终版本的工具中这些行为可能会改变。
+
+谷歌I/O 2016年宣布了提高布局体验的新工具和库来构建Android应用程序，Android stuido已经嵌入了基于约束的可视化布局编辑器，和运行时解释这些约束的ConstraintLayout">
+<meta property="og:image" content="http://wiresareobsolete.com/wp-content/uploads/2016/07/SimpleButtons.png">
+<meta property="og:image" content="http://wiresareobsolete.com/wp-content/uploads/2016/07/CenteredButton.png">
+<meta property="og:image" content="http://wiresareobsolete.com/wp-content/uploads/2016/07/GuidelineButton.png">
+<meta property="og:image" content="http://wiresareobsolete.com/wp-content/uploads/2016/07/AnySizeButton.png">
+<meta property="og:updated_time" content="2016-09-21T09:36:13.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入浅出ConstraintLayout（约束布局）：Part1">
+<meta name="twitter:description" content="ConstraintLayout和布局编辑器工具目前是预览版本。本文内容是基于 constraint-layout:1.0.0-alpha4的代码和行为。在最终版本的工具中这些行为可能会改变。
+
+谷歌I/O 2016年宣布了提高布局体验的新工具和库来构建Android应用程序，Android stuido已经嵌入了基于约束的可视化布局编辑器，和运行时解释这些约束的ConstraintLayout">
+<meta name="twitter:image" content="http://wiresareobsolete.com/wp-content/uploads/2016/07/SimpleButtons.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6332693892688774000,
+      author: 'Author'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/09/02/2016-8-20-深入浅出ConstraintLayout：part1/"/>
+
+  <title> 深入浅出ConstraintLayout（约束布局）：Part1 | DreamX </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?bb0cef3c53445efff5b9f0a2a3b44ba1";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">DreamX</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">stay hungry stay foolish</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                深入浅出ConstraintLayout（约束布局）：Part1
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-09-02T08:36:29Z" content="2016-09-02">
+              2016-09-02
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/09/02/2016-8-20-深入浅出ConstraintLayout：part1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/02/2016-8-20-深入浅出ConstraintLayout：part1/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/09/02/2016-8-20-深入浅出ConstraintLayout：part1/" class="leancloud_visitors" data-flag-title="深入浅出ConstraintLayout（约束布局）：Part1">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>ConstraintLayout和布局编辑器工具目前是预览版本。本文内容是基于 <code>constraint-layout:1.0.0-alpha4</code>的代码和行为。在最终版本的工具中这些行为可能会改变。</p>
+</blockquote>
+<p>谷歌I/O 2016年宣布了提高布局体验的新工具和库来构建Android应用程序，Android stuido已经嵌入了基于约束的可视化布局编辑器，和运行时解释这些约束的<code>ConstraintLayout</code>新容器。</p>
+<p>本文重点解释<code>ConstraintLayout</code>容器的结构和它是如何工作的，新的Android stuido布局编辑器的功能是为开发者更容易管理<code>ConstraintLayout</code>容器强大和灵活的特性而设计的。深入理解<code>ConstraintLayout</code>,我们将能更好地使用开发工具。</p>
+<blockquote>
+<p><code>ConstraintLayout</code>作为一个非捆绑支持库发布，因此你会在本文看到许多XML属性以<code>app:</code>为前缀而非<code>android:</code>:因为它们都来自本地包命名空间。</p>
+</blockquote>
+<p>让我们从定义约束是什么开始…</p>
+<a id="more"></a>
+<h2 id="约束类型"><a href="#约束类型" class="headerlink" title="约束类型"></a>约束类型</h2><p>在上面google页面的链接中，一个放置在<code>view</code>的约束是 “ 描述<code>view</code>相对于布局中其他元素应该如何在屏幕上放置（a description of how that <code>view</code> should be positioned on the screen relative to other elements in the layout) ” ，换句话说，约束连接着<code>view</code>上的一个点（称为锚点）到某种目标，目标可以是：</p>
+<ul>
+<li>一个兄弟<code>view</code>上关系锚点</li>
+<li>一个父容器上关系锚点</li>
+<li>基准线(后面详细讨论)</li>
+</ul>
+<p>每个<code>view</code>支持以下锚点作为一个约束的源或目标:</p>
+<ul>
+<li>Top, Bottom, Left, and Right (or Start and End)</li>
+<li>CenterX and CenterY</li>
+<li>Baseline (text-based <code>view</code>s only)</li>
+</ul>
+<p>在XML中,约束采取以下形式:</p>
+<p><code>layout_constraint[SourceAnchor]_[TargetAnchor]=&quot;[TargetId]&quot;</code></p>
+<p>例如,在的@<code>id/button_cancel</code>结束和<code>@id/button_next</code>起始之间的约束看起来像:</p>
+<pre><code>&lt;Button
+  android:id=&quot;@+id/button_cancel&quot;
+  …​ /&gt;
+
+&lt;Button
+  android:id=&quot;@+id/button_next&quot;
+  app:layout_constraintStart_toEndOf=&quot;@+id/button_cancel&quot;
+  …​ /&gt;
+</code></pre><p>在可视化布局编辑器中,当你通过一个箭头连接两个<code>view</code>来表示约束,工具简单地添加XML到文件。这里有一个更完整一些ConstraintLayout XML的例子:</p>
+<pre><code>&lt;android.support.constraint.ConstraintLayout
+  xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+  xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;
+  xmlns:tools=&quot;http://schemas.android.com/tools&quot;
+  android:id=&quot;@+id/constraintLayout&quot;
+  android:layout_width=&quot;match_parent&quot;
+  android:layout_height=&quot;match_parent&quot;&gt;
+
+  &lt;Button
+    android:id=&quot;@+id/button_cancel&quot;
+    android:layout_width=&quot;wrap_content&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    app:layout_constraintStart_toStartOf=&quot;@+id/constraintLayout&quot;
+    android:layout_marginStart=&quot;16dp&quot;
+    app:layout_constraintBottom_toBottomOf=&quot;@+id/constraintLayout&quot;
+    android:layout_marginBottom=&quot;16dp&quot; /&gt;
+
+  &lt;Button
+    android:id=&quot;@+id/button_next&quot;
+    android:layout_width=&quot;wrap_content&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    app:layout_constraintStart_toEndOf=&quot;@+id/button_cancel&quot;
+    android:layout_marginStart=&quot;16dp&quot;
+    app:layout_constraintBottom_toBottomOf=&quot;@+id/constraintLayout&quot;
+    android:layout_marginBottom=&quot;16dp&quot;/&gt;
+
+&lt;/android.support.constraint.ConstraintLayout&gt;
+</code></pre><p><img src="http://wiresareobsolete.com/wp-content/uploads/2016/07/SimpleButtons.png" alt="simpleButtons.png"></p>
+<p>在这个例子中，我们有一些约束是相对父容器调整button <code>view</code>。正如我们之前看到的他们采用相同的格式,但目标是ConstraintLayout实例的id。</p>
+<blockquote>
+<p>约束总是通过android:id关联目标。如果添加约束的<code>view</code>没有id属性,为了创建约束，Android Studio布局编辑器将为您创建一个。</p>
+</blockquote>
+<p>您可能还注意到从最后一个例子,<code>ConstraintLayout</code>支持<code>margins</code>。默认情况下,两个<code>view</code>之间的约束将被解释为使<code>view</code>立即相邻。如果你想使它们之间有间距，<code>margins</code>是必需的。</p>
+<p>听起来和<code>RelativeLayout</code>相当像，是不是？</p>
+<h2 id="约束偏移"><a href="#约束偏移" class="headerlink" title="约束偏移"></a>约束偏移</h2><p>当一个<code>view</code>被相同轴的两侧同时约束，它将默认均分两个目标锚点间的距离。下面的XML是在父容器中心一个按钮:</p>
+<pre><code>&lt;android.support.constraint.ConstraintLayout
+  xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+  xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;
+  xmlns:tools=&quot;http://schemas.android.com/tools&quot;
+  android:id=&quot;@+id/constraintLayout&quot;
+  android:layout_width=&quot;match_parent&quot;
+  android:layout_height=&quot;match_parent&quot;&gt;
+
+  &lt;Button
+    android:layout_width=&quot;wrap_content&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    android:id=&quot;@+id/button&quot;
+    app:layout_constraintTop_toTopOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintBottom_toBottomOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintStart_toStartOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintEnd_toEndOf=&quot;@+id/constraintLayout&quot; /&gt;
+
+&lt;/android.support.constraint.ConstraintLayout&gt;
+</code></pre><p><img src="http://wiresareobsolete.com/wp-content/uploads/2016/07/CenteredButton.png" alt="CenteredButton.png"></p>
+<p>这是一个不错的功能,但ConstraintLayout用偏移这个概念填上这个缺口。偏移施加<code>weight</code>因子于这对约束，达到非均分空间。例如:</p>
+<pre><code>&lt;android.support.constraint.ConstraintLayout
+  xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+  xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;
+  xmlns:tools=&quot;http://schemas.android.com/tools&quot;
+  android:id=&quot;@+id/constraintLayout&quot;
+  android:layout_width=&quot;match_parent&quot;
+  android:layout_height=&quot;match_parent&quot;&gt;
+
+  &lt;Button
+    android:layout_width=&quot;wrap_content&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    android:id=&quot;@+id/button&quot;
+    app:layout_constraintTop_toTopOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintBottom_toBottomOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintStart_toStartOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintEnd_toEndOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintHorizontal_bias=&quot;0.25&quot;
+    app:layout_constraintVertical_bias=&quot;0.25&quot; /&gt;
+
+&lt;/android.support.constraint.ConstraintLayout&gt;
+</code></pre><p>现在相同的按钮是以25/75的<code>weight</code>分配每个轴上的可用空间。这是更接近于LinearLayout或GridLayout中的<code>weight</code>系统。但它比它们更好,因为<code>view</code>不必为了使用<code>weight</code>而去充满的可用空间。</p>
+<blockquote>
+<p>从技术上讲,当没有偏移约束存在, 偏移值是0.5。这就是为什么默认行为是中心的<code>view</code>。</p>
+</blockquote>
+<p>你希望可以开始看到ConstraintLayout拥有强大扁平视图层次结构。它可以像任何现有的框架布局管理器,或者他们所有!</p>
+<h2 id="关联基准线"><a href="#关联基准线" class="headerlink" title="关联基准线"></a>关联基准线</h2><p>一般情况下,视图需要一个任意的锚点对齐,ConstraintLayout支持基准线。基准线实际上是<code>view</code>的一个子类,添加到布局就像任何其他的孩子。<code>view</code>有一些特殊的属性:</p>
+<ol>
+<li>它们的测量大小总为0</li>
+<li>它们强制自己的可见性为<code>View.GONE</code></li>
+</ol>
+<p>因此,尽管它们作为<code>view</code>存在容器,他们在布局从不占空间。它们存在纯粹为了提供基准线属性而定义一个水平或垂直锚给其他<code>view</code>。让我们来看一个例子:</p>
+<pre><code>&lt;android.support.constraint.ConstraintLayout
+  xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+  xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;
+  xmlns:tools=&quot;http://schemas.android.com/tools&quot;
+  android:id=&quot;@+id/constraintLayout&quot;
+  android:layout_width=&quot;match_parent&quot;
+  android:layout_height=&quot;match_parent&quot;&gt;
+
+  &lt;android.support.constraint.Guideline
+    android:layout_width=&quot;wrap_content&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    android:id=&quot;@+id/guideline&quot;
+    android:orientation=&quot;vertical&quot;
+    app:layout_constraintGuide_begin=&quot;72dp&quot; /&gt;
+
+  &lt;Button
+    android:id=&quot;@+id/button_cancel&quot;
+    android:layout_width=&quot;wrap_content&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    app:layout_constraintStart_toStartOf=&quot;@+id/guideline&quot;
+    app:layout_constraintTop_toTopOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintBottom_toBottomOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintVertical_bias=&quot;0.25&quot; /&gt;
+
+  &lt;Button
+    android:id=&quot;@+id/button_next&quot;
+    android:layout_width=&quot;wrap_content&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    app:layout_constraintStart_toStartOf=&quot;@+id/guideline&quot;
+    app:layout_constraintTop_toTopOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintBottom_toBottomOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintVertical_bias=&quot;0.75&quot; /&gt;
+
+&lt;/android.support.constraint.ConstraintLayout&gt;
+</code></pre><p><img src="http://wiresareobsolete.com/wp-content/uploads/2016/07/GuidelineButton.png" alt="GuidelineButton.png"></p>
+<p>在距容器起始72dp的位置设置一个垂直的基准线，每个按钮现在可以使用基准线作为它<code>constraintStart</code>目标相同的任意点边缘对齐，<br>基准线可以有三种属性:</p>
+<ul>
+<li><code>layout_constraintGuide_begin</code>: 从起始边缘的绝对距离</li>
+<li><code>layout_constraintGuide_end</code>: 从结束边缘的绝对距离</li>
+<li><code>layout_constraintGuide_Percent</code>:从起始边缘的百分比距离</li>
+</ul>
+<p>从约束的角度来看,一个基准线是一个有效的目标,对于任何锚点上找到相同的轴(水平或垂直)。因此,它还必须有一个有效的id定义。</p>
+<blockquote>
+<p>在当前α版本,有一个bug,如果基准线在XML中出现在试图引用它的<code>view</code>的后面，约束会有不正确行为。为了解决这一问题,总是先添加您的基准线(可视化编辑器)或手动将其移动到顶部的XML</p>
+</blockquote>
+<h2 id="view测量"><a href="#view测量" class="headerlink" title="view测量"></a>view测量</h2><p>到目前为止我们谈了很多关于视图放置。我想花点时间来快速讨论视图大小。<code>ConstraintLayout</code>对于<code>view</code>应用稍微不同的测量规则，超出你以前使用的。有三个尺寸的定义,可以适用于任何子视图的宽度或高度:</p>
+<ol>
+<li><code>Exact</code>: 测量一个特定的大小(通常在dp)<ul>
+<li>设置<code>layout_width</code>或<code>layout_height</code>为非零值</li>
+</ul>
+</li>
+<li><code>Wrap Content</code>: 测量符合视图的内容<ul>
+<li>设置<code>layout_width</code>或<code>layout_height</code>为<code>wrap_content</code></li>
+</ul>
+</li>
+<li><code>Any Size</code>: 测量约束的可用空间<ul>
+<li>S设置<code>layout_width</code>或<code>layout_height</code>为0dp</li>
+</ul>
+</li>
+</ol>
+<p>哇,曲线球!<code>match_parent</code>怎么了? !<code>ConstraintLayout</code>不支持它,我稍后会解释为什么。简短的版本是<code>Any Size</code>有效地取代了<code>match_parent</code>用例的方式更好的遵循的约束。</p>
+<blockquote>
+<p>任何试图在可视化布局编辑器添加给<code>view</code>添加<code>match_parent</code>的将被覆盖,如果你够狡猾的从XML添加，结果将产生非常尴尬的内容<code>gravity</code>和<code>positioning</code>。不要使用它。</p>
+</blockquote>
+<p>使用<code>Any Size</code>,我们可以要求视图拉伸轴方向附加约束。另一个例子可能吗?</p>
+<pre><code>&lt;android.support.constraint.ConstraintLayout
+  xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+  xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;
+  xmlns:tools=&quot;http://schemas.android.com/tools&quot;
+  android:id=&quot;@+id/constraintLayout&quot;
+  android:layout_width=&quot;match_parent&quot;
+  android:layout_height=&quot;match_parent&quot;&gt;
+
+  &lt;Button
+    android:id=&quot;@+id/button_cancel&quot;
+    android:layout_width=&quot;wrap_content&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    app:layout_constraintStart_toStartOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintTop_toTopOf=&quot;@+id/constraintLayout&quot;/&gt;
+
+  &lt;Button
+    android:id=&quot;@+id/button_next&quot;
+    android:layout_width=&quot;0dp&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    app:layout_constraintStart_toEndOf=&quot;@+id/button_cancel&quot;
+    app:layout_constraintEnd_toEndOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintTop_toTopOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintBottom_toBottomOf=&quot;@+id/constraintLayout&quot; /&gt;
+
+&lt;/android.support.constraint.ConstraintLayout&gt;
+</code></pre><p><img src="http://wiresareobsolete.com/wp-content/uploads/2016/07/AnySizeButton.png" alt="AnySizeButton.png"></p>
+<p>通过设置<code>layout_width</code>为0dp,第二个按钮填充第一个按钮的结束和父容器的结束的空间。这也是类似于当前框架行为的<code>weight</code>,但使用了一个更灵活的方式。</p>
+<h2 id="One-More-Thing"><a href="#One-More-Thing" class="headerlink" title="One More Thing"></a>One More Thing</h2><p>一个常见的UI布局任务是以特定的宽高比测量<code>view</code>。这是非常常见的图片,无论是广场(1:1),4:3,16:9的,或者更多的自定义。<code>ConstraintLayout</code>,你将不再需要创建一个定制的视图<code>view</code>或<code>ViewGroup</code>的子类，感谢layout_constraintDimensionRatio。</p>
+<p>该功能需要<code>view</code>的一个的尺寸是“已知的”(固定尺寸或<code>wrap_content</code>)和另一个是<code>Any Size</code>(0 dp)。“<code>Any Size</code>尺寸将测量保持适当的比例通过约束设置。</p>
+<pre><code>&lt;ImageView
+    android:layout_width=&quot;0dp&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    android:src=&quot;@drawable/water&quot;
+    app:layout_constraintDimensionRatio=&quot;16:9&quot;
+    app:layout_constraintLeft_toLeftOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintTop_toTopOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintRight_toRightOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintBottom_toBottomOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintVertical_bias=&quot;0.0&quot; /&gt;
+
+  &lt;ImageView
+    android:layout_width=&quot;0dp&quot;
+    android:layout_height=&quot;wrap_content&quot;
+    android:src=&quot;@drawable/grass&quot;
+    app:layout_constraintDimensionRatio=&quot;4:3&quot;
+    app:layout_constraintLeft_toLeftOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintRight_toRightOf=&quot;@+id/constraintLayout&quot;
+    app:layout_constraintBottom_toBottomOf=&quot;@+id/constraintLayout&quot; /&gt;
+
+  …​
+
+&lt;/android.support.constraint.ConstraintLayout&gt;
+</code></pre><p>对不起<code>SquareImageView</code> <code>AspectImageView</code>,我们不需要你了…</p>
+<h2 id="接下来是什么"><a href="#接下来是什么" class="headerlink" title="接下来是什么?"></a>接下来是什么?</h2><p>希望你现在对<code>ConstraintLayout</code>能干什么有一个扎实的理解，即使你没有依靠布局编辑器工具，一旦理解了语法，约束生成的XML非常简单和直观的。</p>
+<p>在下一篇文章中,我们将关注<code>ConstraintLayout</code>如何处理所有这些约束来设置视图位置和大小。我们将深入其实现来理解运行时测量和布局策略。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持优质技术分享，您的支持将鼓励我继续努力！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechatpay.png" alt="Qinfeng WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/02/05/2016-01-20-android-开发文化QualityMatter/" rel="next" title="Android 开发文化quality matters">
+                <i class="fa fa-chevron-left"></i> Android 开发文化quality matters
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/09/02/2016-8-20-深入浅出ConstraintLayout：part1/"
+           data-title="深入浅出ConstraintLayout（约束布局）：Part1" data-url="http://yoursite.com/2016/09/02/2016-8-20-深入浅出ConstraintLayout：part1/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Qinfeng" />
+          <p class="site-author-name" itemprop="name">Qinfeng</p>
+          <p class="site-description motion-element" itemprop="description">be a better coder</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#约束类型"><span class="nav-number">1.</span> <span class="nav-text">约束类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#约束偏移"><span class="nav-number">2.</span> <span class="nav-text">约束偏移</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#关联基准线"><span class="nav-number">3.</span> <span class="nav-text">关联基准线</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#view测量"><span class="nav-number">4.</span> <span class="nav-text">view测量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#One-More-Thing"><span class="nav-number">5.</span> <span class="nav-text">One More Thing</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#接下来是什么"><span class="nav-number">6.</span> <span class="nav-text">接下来是什么?</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Qinfeng</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"yqf19930712githubio"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("synfJXikap0By20AXCEku4nu-gzGzoHsz", "lIciNXBcBpmpClv2TdTKJw3y");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>

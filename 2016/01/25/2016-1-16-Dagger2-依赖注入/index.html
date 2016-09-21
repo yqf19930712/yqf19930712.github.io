@@ -1,0 +1,1257 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="许多android应用实例化对象经常要求其他依赖，举个例子，实例化twitter API client使用网络（retrofit），为了使用这个库，你也许需要加入解析库（Gson），另外，实现认证或缓存也许需要shared preference 或其他普通存储的类要求首先实例化它们并形成依赖链。
+dagger2 为你分析这些依赖并生成代码把它们串起来。尽管有其他依赖注入库，大多受限于依赖XML，要">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dagger2依赖注入">
+<meta property="og:url" content="http://yoursite.com/2016/01/25/2016-1-16-Dagger2-依赖注入/index.html">
+<meta property="og:site_name" content="DreamX">
+<meta property="og:description" content="许多android应用实例化对象经常要求其他依赖，举个例子，实例化twitter API client使用网络（retrofit），为了使用这个库，你也许需要加入解析库（Gson），另外，实现认证或缓存也许需要shared preference 或其他普通存储的类要求首先实例化它们并形成依赖链。
+dagger2 为你分析这些依赖并生成代码把它们串起来。尽管有其他依赖注入库，大多受限于依赖XML，要">
+<meta property="og:image" content="https://raw.githubusercontent.com/codepath/android_guides/master/images/dagger_general.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/codepath/android_guides/master/images/dagger_qualifiers.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/codepath/android_guides/master/images/dagger_scopes.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/codepath/android_guides/master/images/dagger_dependency.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/codepath/android_guides/master/images/dagger_subcomponent.png">
+<meta property="og:updated_time" content="2016-09-21T09:27:51.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Dagger2依赖注入">
+<meta name="twitter:description" content="许多android应用实例化对象经常要求其他依赖，举个例子，实例化twitter API client使用网络（retrofit），为了使用这个库，你也许需要加入解析库（Gson），另外，实现认证或缓存也许需要shared preference 或其他普通存储的类要求首先实例化它们并形成依赖链。
+dagger2 为你分析这些依赖并生成代码把它们串起来。尽管有其他依赖注入库，大多受限于依赖XML，要">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/codepath/android_guides/master/images/dagger_general.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"hide"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 6332693892688774000,
+      author: 'Author'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/01/25/2016-1-16-Dagger2-依赖注入/"/>
+
+  <title> Dagger2依赖注入 | DreamX </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?bb0cef3c53445efff5b9f0a2a3b44ba1";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">DreamX</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">stay hungry stay foolish</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Dagger2依赖注入
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-01-25T10:06:24Z" content="2016-01-25">
+              2016-01-25
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/01/25/2016-1-16-Dagger2-依赖注入/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/25/2016-1-16-Dagger2-依赖注入/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/01/25/2016-1-16-Dagger2-依赖注入/" class="leancloud_visitors" data-flag-title="Dagger2依赖注入">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>许多android应用实例化对象经常要求其他依赖，举个例子，实例化twitter API client使用网络（retrofit），为了使用这个库，你也许需要加入解析库（Gson），另外，实现认证或缓存也许需要shared preference 或其他普通存储的类要求首先实例化它们并形成依赖链。</p>
+<p>dagger2 为你分析这些依赖并生成代码把它们串起来。尽管有其他依赖注入库，大多受限于依赖XML，要求在运行时验证依赖问题或在启动时造成性能负担。dagger 2 完全通过使用java annotation processors和编译时检查来分析和验证依赖。直到现在它被认为是最高效的依赖注入框架之一。</p>
+<a id="more"></a>
+<h2 id="优势"><a href="#优势" class="headerlink" title="优势"></a>优势</h2><ul>
+<li><p><strong>简化获取共享实例</strong> 就像butterknife库使定义view，事件处理，资源的引用更简单，dagger 2 提供一种获取共享实例的简单方法。例如，一旦我们在Dagger中声明你的单个实例（MyTwtterApiClient 或 SharePreferences），我们可以用@inject注释域声明：</p>
+<pre><code>public class MainActivity extends Activity {
+   @Inject MyTwitterApiClient mTwitterApiClient;
+   @Inject SharedPreferences sharedPreferences;
+
+   public void onCreate(Bundle savedInstance) {
+       // assign singleton instances to fields
+       InjectorClass.inject(this);
+
+   }      
+</code></pre></li>
+<li><strong>对于复杂依赖配置简单</strong>我们创建对象时都有潜在的顺序。dagger 2 遍历依赖图并生成容易理解和追踪的代码，通过获取引用并作为依赖传递给其他对象不但把你从手写你需要的大量模版代码中解救出来，也有助于简化重构，从此你可以致力于如何构建模型而不是关注创建它们的顺序。</li>
+<li>使单元测试和集成测试更简单，因为依赖图由我们创建，我们可以容易的替换网络返回模型和模拟它的行为。</li>
+<li><strong>域内实例</strong>你不仅能更方便管理在整个应用生命周期持续的实例，你也能凭借dagger 2 的优势去定义拥有更短生命周期的实例。</li>
+</ul>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>添加依赖到<code>app/build.gradle</code>文件</p>
+<pre><code>dependencies { 
+    compile &apos;com.google.dagger:dagger:2.0&apos; 
+    provided &apos;com.google.dagger:dagger-compiler:2.0&apos; 
+    provided &apos;org.glassfish:javax.annotation:10.0-b28&apos; 
+}
+</code></pre><p>注意：provided 关键字引用的依赖只在编译时需要。dagger 编译器生成创建你源码中类的依赖图的代码，在编译时这些类会被加入IDE class path。</p>
+<p>android studio默认不会认为大量生成dagger 2代码为合法类，但是加入android apt 插件会添加这些文件到IDE class path 并使它们可见。</p>
+<p>在根目录的<code>build.gradle</code>添加：</p>
+<pre><code>dependencies { 
+    // other classpath definitions here 
+    classpath &apos;com.neenbedankt.gradle.plugins:android-apt:1.8&apos;
+ }
+</code></pre><p>确定在<code>app/build.gradle</code>文件中应用插件：</p>
+<pre><code>// add after applying plugin: &apos;com.android.application&apos; 
+apply plugin:&apos;com.neenbedankt.android-apt&apos;
+</code></pre><h2 id="单个实例"><a href="#单个实例" class="headerlink" title="单个实例"></a>单个实例</h2><p><img src="https://raw.githubusercontent.com/codepath/android_guides/master/images/dagger_general.png" alt="image"><br>下面最简单的例子是教你如何通过dagger集中你所有的单例创建。假设你不会用任何类型的依赖注入框架并写下twitter client 和下面一样：</p>
+<pre><code>OkHttpClient client = new OkHttpClient();
+
+// Enable caching for OkHttp
+int cacheSize = 10 * 1024 * 1024; // 10 MiB
+Cache cache = new Cache(getApplication().getCacheDir(), cacheSize);
+client.setCache(cache);
+
+// Used for caching authentication tokens
+SharedPreferences sharedPrefeences = PreferenceManager.getDefaultSharedPreferences(this);
+
+// Instantiate Gson
+Gson gson = new GsonBuilder().create();
+GsonConverterFactory converterFactory = GsonConverterFactory.create(Gson);
+
+// Build Retrofit
+Retrofit retrofit = new Retrofit.Builder()
+                                .baseUrl(&quot;https://api.github.com&quot;)
+                                .addConverterFactory(converterFactory)
+                                .client(client)  // custom client
+                                .build();
+</code></pre><h3 id="声明你的单个实例"><a href="#声明你的单个实例" class="headerlink" title="声明你的单个实例"></a>声明你的单个实例</h3><p>Declare your singletons</p>
+<p>你需要通过创建dagger 2 module定义哪些对象应该作为依赖链中的部分被包含。比如，你希望创建一个绑定应用生命周期并且我们所有的activities的fragment都可以使用的retrofit单实例，我们首先要让dagger知道retrofit实例可以被提供。</p>
+<p>因为我们希望初始化缓存，我们需要一个application context，我们第一的dagger module，AppModule，会用于提供这个引用。</p>
+<pre><code>@Module
+public class AppModule {
+
+    Application mApplication;
+
+    public AppModule(Application application) {
+        mApplication = application;
+    }
+
+    @Provides
+    @Singleton
+    Application providesApplication() {
+        return mApplication;
+    }
+}
+</code></pre><p>我们创建一个NetModule类并用@Module注释来告诉dagger搜索实例提供者的可用方法。</p>
+<p>这些实际上暴露可用的返回值类型的方法应该也被@provider修饰符注释，singleton 注释也告诉dagger编译器实例在应用中只应该创建一次。在下面了例子中，我们使用SharedPreferences ,  Gson ,  Cache ,  OkHttpClient  和  Retrofit 作为返回值类型可用作为依赖表的部分使用。</p>
+<pre><code>@Module
+public class NetModule {
+
+    String mBaseUrl;
+
+    // Constructor needs one parameter to instantiate. 
+    public NetModule(String baseUrl) {
+        this.mBaseUrl = baseUrl;
+    }
+
+    // Dagger will only look for methods annotated with @Provides
+    @Provides
+    @Singleton
+    // Application reference must come from AppModule.class
+    SharedPreferences providesSharedPreferences(Application application) {
+        return PreferenceManager.getDefaultSharedPreferences(application);
+    }
+
+    @Provides
+    @Singleton
+    Cache provideOkHttpCache(Application application) {
+        int cacheSize = 10 * 1024 * 1024; // 10 MiB
+        Cache cache = new Cache(application.getCacheDir(), cacheSize);
+        return cache;
+    }
+
+  @Provides
+  @Singleton
+  Gson provideGson() { 
+      GsonBuilder gsonBuilder = new GsonBuilder();
+      gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
+      return gsonBuilder.create();
+  }
+
+  @Provides
+  @Singleton
+  OkHttpClient provideOkHttpClient(Cache cache) {
+      OkHttpClient client = new OkHttpClient();
+      client.setCache(cache);
+      return client;
+  }
+
+  @Provides
+  @Singleton
+  Retrofit provideRetrofit(Gson gson, OkHttpClient okHttpClient) {
+      Retrofit retrofit = new Retrofit.Builder()
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .baseUrl(mBaseUrl)
+                .client(okHttpClient)
+                .build();
+        return retrofit;
+    }
+}
+</code></pre><p>注意方法名无关紧要它们可以命名成任何名字。被@provider修饰符注释的返回值类型用于连接这个实例和任何其他同样类型的模型。@sigleton注释用于告诉dagger只会被初始化一次在应用的整个生命周期。</p>
+<p>retrofit实例依赖son和okhttpclient实例，因此我们可以在这个类中定义接受这两种类型的参数的方法，方法中@provider注释和这两个参数会使dagger 构建retrofit实例依赖son和okhhtpclient。</p>
+<h3 id="定义注入目标"><a href="#定义注入目标" class="headerlink" title="定义注入目标"></a>定义注入目标</h3><p>Define injection targets</p>
+<p>dagger 提供一种方法，在 activities, fragments, or services 的被赋值引用的域中注释@inject 并调用inject（）方法。调用inject（）会使dagger 2 在依赖图定位一个匹配返回值类型的实例。如果找到一个，他就会被赋值给对应的域。比如，在下面实例中，dagger会试图寻找返回MyTwitterApiClient 和 SharedPreferences类型的provider。</p>
+<pre><code>public class MainActivity extends Activity {
+  @Inject MyTwitterApiClient mTwitterApiClient;
+  @Inject SharedPreferences sharedPreferences;
+
+  public void onCreate(Bundle savedInstance) {
+      // assign singleton instances to fields
+      InjectorClass.inject(this);
+  }
+}
+</code></pre><p>dagger 2 中使用的注入器 class 叫 component，为了定义一个实例之前访问它，componet会在我们的 activities, services, or fragments赋值其引用，我们需要在component class注释@component声明 ，注意activities, services, or fragments在component应该被独立的方法中声明</p>
+<pre><code>@Singleton
+@Component(modules={AppModule.class, NetModule.class})
+public interface NetComponent {
+  void inject(MainActivity activity);
+  // void inject(MyFragment fragment);
+  // void inject(MyService service);
+}
+</code></pre><p>注意基类作为注入目标是不充分的。dagger 2依赖强类型的类，所以你必须显示指出注入目标类(There are suggestions to workaround the issue, but the code to do so may be more complicated to trace than simply defining them.)。</p>
+<h3 id="代码生成"><a href="#代码生成" class="headerlink" title="代码生成"></a>代码生成</h3><p>dagger 2 重要的一面是library生成被@component注释的类的代码，你可以使用以Dagger_开头的类，它会响应实例化我们依赖图中的一个实例并使用它对注释@inject的域执行注入。检查 setup guide并确信你已经加入android apt 插件，它会允许你更好的理解dagger2生成的类。</p>
+<h3 id="实例化component"><a href="#实例化component" class="headerlink" title="实例化component"></a>实例化component</h3><p>我们应该在Application类中执行这个工作，因为这些实例应该在应用的整个生命周期中声明一次：</p>
+<pre><code>public class MyApp extends Application {
+
+    private NetComponent mNetComponent;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        // specify the full namespace of the component
+        // Dagger_xxxx (where xxxx = component name)
+        mNetComponent = com.codepath.dagger.components.DaggerNetComponent.builder()
+                // list of modules that are part of this component need to be created here too
+                .appModule(new AppModule(this))
+                .netModule(new NetModule(&quot;https://api.github.com&quot;))
+                .build();
+
+        // If a Dagger 2 component does not have any constructor arguments for any of its modules,
+        // then we can use .create() as a shortcut instead:
+        //  mAppComponent = com.codepath.dagger.components.DaggerNetComponent.create();
+    }
+
+    public NetComponent getNetComponent() {
+      return mNetComponent;
+    }
+}
+</code></pre><p>因为我们覆盖了默认的Application类，我们也要修改启动应用的application name，这种方法你的应用会使用你的application 类来初始化实例。</p>
+<pre><code>&lt;application
+      android:allowBackup=&quot;true&quot;
+      android:name=&quot;.MyApp&quot;&gt;
+</code></pre><p>在我们的activity中，我们需要简单的获取这些component并调用inject（）</p>
+<pre><code>public class MyActivity extends Activity {
+  @Inject OkHttpClient mOkHttpClient;
+  @Inject SharedPreferences sharedPreferences;
+
+  public void onCreate(Bundle savedInstance) {
+        // assign singleton instances to fields
+        // We need to cast to `MyApp` in order to get the right method
+        ((MyApp) getApplication()).getNetComponent()).inject(this);
+    }
+}
+</code></pre><h3 id="限定类型"><a href="#限定类型" class="headerlink" title="限定类型"></a>限定类型</h3><p>Qualified types<br><img src="https://raw.githubusercontent.com/codepath/android_guides/master/images/dagger_qualifiers.png" alt="Dagger Qualifiers"><br>如果我们需要两个不同的对象但返回值类型相同，我们可以使用@name 限定符注释。你应该定义它们在我们提供实例( @Provides  annotation)和注入它们 ( @Inject  annotations）的地方。</p>
+<pre><code>@Provides @Named(&quot;cached&quot;)
+@Singleton
+OkHttpClient provideOkHttpClient(Cache cache) {
+    OkHttpClient client = new OkHttpClient();
+    client.setCache(cache);
+}
+
+@Provides @Named(&quot;non_cached&quot;) @Singleton
+OkHttpClient provideOkHttpClient() {
+    OkHttpClient client = new OkHttpClient();
+    return client;
+}
+</code></pre><p>注入也会要求注释</p>
+<pre><code>@Inject @Named(&quot;cached&quot;) OkHttpClient client;
+@Inject @Named(&quot;non_cached&quot;) OkHttpClient client2;
+</code></pre><p>@name 由dagger预定义的限定符，你也可以创建你自己的限定符注释</p>
+<pre><code>@Qualifier
+@Documented
+@Retention(RUNTIME)
+public @interface DefaultPreferences {
+}
+</code></pre><h3 id="域"><a href="#域" class="headerlink" title="域"></a>域</h3><p>Scopes<br><img src="https://raw.githubusercontent.com/codepath/android_guides/master/images/dagger_scopes.png" alt="Dagger Scopes"><br>域（Scope） 注释使dagger持有给定component提供对象的单个实例，没有域的提供者方法在任何给定类型被注入的时间都会被调用创建一个新对象</p>
+<p>@singleton 是 由dagger定义的域（Scope）注释，你也可以在你的应用中定义无数域（Scope）注释</p>
+<pre><code>@Scope
+@Documented
+@Retention(value=RUNTIME)
+public @interface MyActivityScope
+</code></pre><h3 id="Component依赖"><a href="#Component依赖" class="headerlink" title="Component依赖"></a>Component依赖</h3><p>Component Dependencies<br><img src="https://raw.githubusercontent.com/codepath/android_guides/master/images/dagger_dependency.png" alt="Dagger Component Dependencies"><br>上面例子展示了我们使用持续应用整个生命周期的单实例。我们也依赖一个主要dagger componet。如果我们希望有多个不需要一直存在于内存的component （绑定 activity 或 fragment，甚至绑定用户登录状态 ），我们能创建依赖组件，当我们使用依赖组件有下面几点考虑</p>
+<ul>
+<li>两个依赖组件不能分享相同域（scope）比如，两个不同的组件不能同时被@singleton注释，这个规定被强行执行因为 here。依赖组件需要定义自己的域</li>
+<li>尽管dagger 2 有创建域实例的能力，但是其责任需要你创建和删除引用与目标行为一致。dagger 2并不知道关于下层的任何实现。</li>
+<li><p>当创建依赖组件时，父组件需要显示暴露对象给下游对象，比如，如果下游组件需要获取retrofit实例，component需要显式通过对应的返回值类型暴露它</p>
+<pre><code>@Singleton
+@Component(modules={AppModule.class, NetModule.class})
+public interface NetComponent {
+    // downstream components need these exposed with the return type
+    // method name does not really matter
+    Retrofit retrofit();
+}
+</code></pre></li>
+</ul>
+<p>比如，如果我们在应用内部使用依赖组件创建用于用户登录链接生命周期，我们可以定义自己的UserScope 接口</p>
+<pre><code>import java.lang.annotation.Retention;
+import javax.inject.Scope;
+
+@Scope
+public @interface UserScope {
+}
+</code></pre><p>我们可以作为子组件</p>
+<pre><code>@UserScope // using the previously defined scope, note that @Singleton will not work
+@Component(dependencies = NetComponent.class, modules = GitHubModule.class)
+public interface GitHubComponent {
+    void inject(MainActivity activity);
+}
+</code></pre><p>假设 这个github module 简单返回一个github api接口</p>
+<pre><code>@Module
+public class GitHubModule {
+
+    public interface GitHubApiInterface {
+      @GET(&quot;/org/{orgName}/repos&quot;)
+      Call&lt;ArrayList&lt;Repository&gt;&gt; getRepository(@Path(&quot;orgName&quot;) String orgName);
+    }
+
+    @Provides
+    @UserScope // needs to be consistent with the component scope
+    public GitHubApiInterface providesGitHubInterface(Retrofit retrofit) {
+        return retrofit.create(GitHubApiInterface.class);
+    }
+}
+</code></pre><p>为了GithubModule 获取retrofit实例，我们需要在上游组件显式定义它，如果下游将要执行注入，它们也应该从上游组件移除</p>
+<pre><code>@Singleton
+@Component(modules={AppModule.class, NetModule.class})
+public interface NetComponent {
+    // remove injection methods if downstream modules will perform injection
+
+    // downstream components need these exposed
+    Retrofit retrofit();
+    OkHttpClient okHttpClient();
+    SharedPreferences sharedPreferences();
+}
+</code></pre><p>最后一步使用实例化GitHubComponent，此时，我们首先需要构建NetComponent并传人DaggerGitHubComponent的构造器中。</p>
+<pre><code>NetComponent netComponent = DaggerNetComponent.builder()
+                .appModule(new AppModule(this))
+                .netModule(new NetModule(&quot;https://api.github.com&quot;))
+                .build();
+
+GitHubComponent gitHubComponent = DaggerGitHubComponent.builder()
+                .netComponent(mNetComponent)
+                .gitHubModule(new GitHubModule())
+                .build();
+</code></pre><h2 id="Subcomponents"><a href="#Subcomponents" class="headerlink" title="Subcomponents"></a>Subcomponents</h2><p><img src="https://raw.githubusercontent.com/codepath/android_guides/master/images/dagger_subcomponent.png" alt="Dagger subcomponents"><br>使用 Subcomponent 是另一种扩展一个组件的对象图，有依赖，subcomponent的组件有它们自己的生命周期当所有subcomponent的引用消失时可以被gc</p>
+<p>依赖subcomponent主要不同</p>
+<ul>
+<li><p>需要在父接口被声明</p>
+</li>
+<li><p>可以获取父组件图的所有元素</p>
+</li>
+</ul>
+<p>对activity使用subcomponent的例子</p>
+<pre><code>@Module
+public class MyActivityModule {
+    private final MyActivity activity;
+    public MyActivityModule(MyActivity activity) { this.activity = activity; }
+
+    @Provides @MyActivityScope @Named(&quot;my_list&quot;)
+    public ArrayAdapter providesMyListAdapter() {
+        return new ArrayAdapter&lt;String&gt;(activity, android.R.layout.my_list);
+    }
+    ...
+}
+
+
+@MyActivityScope
+@Subcomponent(modules={ MyActivityModule.class })
+public interface MyActivitySubComponent {
+    @Named(&quot;my_list&quot;) ArrayAdapter myListAdapter();
+}
+
+@Singleton
+@Component(modules={ ... })
+public interface MyApplicationComponent {
+    MyActivitySubComponent newMyActivitySubcomponent(MyActivityModule activityModule);
+}
+</code></pre><p>在上面例子中，每次调用newMyActivitySubcomponent（）时都会创建一个subcomponent的新实例，使用subcomponent注入到activity 中</p>
+<pre><code>public class MyActivity extends Activity {
+  @Inject ArrayAdapter arrayAdapter;
+
+  public void onCreate(Bundle savedInstance) {
+        // assign singleton instances to fields
+        // We need to cast to `MyApp` in order to get the right method
+        ((MyApp) getApplication()).getApplicationComponent())
+            .newMyActivitySubcomponent(new MyActivityModule(this))
+            .inject(this);
+    }
+}
+</code></pre><h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><p><a href="https://github.com/codepath/android_guides/wiki/Dependency-Injection-with-Dagger-2#" target="_blank" rel="external">原文链接</a></p>
+<ul>
+<li><a href="http://google.github.io/dagger/" target="_blank" rel="external">Dagger 2 Github Page</a></li>
+<li><a href="https://github.com/vinc3m1/nowdothis" target="_blank" rel="external">Sample project using Dagger 2</a></li>
+<li><a href="https://docs.google.com/presentation/d/1bkctcKjbLlpiI0Nj9v0QpCcNIiZBhVsJsJp1dgU5n98/" target="_blank" rel="external">Vince Mi’s Codepath Meetup Dagger 2 Slides</a></li>
+<li><a href="http://code.tutsplus.com/tutorials/dependency-injection-with-dagger-2-on-android--cms-23345" target="_blank" rel="external">http://code.tutsplus.com/tutorials/dependency-injection-with-dagger-2-on-android--cms-23345</a></li>
+<li><a href="https://speakerdeck.com/jakewharton/dependency-injection-with-dagger-2-devoxx-2014" target="_blank" rel="external">Jake Wharton’s Devoxx Dagger 2 Slides</a></li>
+<li><a href="https://www.parleys.com/tutorial/5471cdd1e4b065ebcfa1d557/" target="_blank" rel="external">Jake Wharton’s Devoxx Dagger 2 Talk</a></li>
+<li><a href="https://www.youtube.com/watch?v=oK_XtfXPkqw" target="_blank" rel="external">Dagger 2 Google Developers Talk</a></li>
+<li><a href="http://frogermcs.github.io/dagger-1-to-2-migration/" target="_blank" rel="external">Dagger 1 to Dagger 2</a></li>
+<li><a href="http://fernandocejas.com/2015/04/11/tasting-dagger-2-on-android/" target="_blank" rel="external">Tasting Dagger 2 on Android</a></li>
+<li><a href="http://blog.sqisland.com/2015/04/dagger-2-espresso-2-mockito.html#sthash.IMzjLiVu.dpuf" target="_blank" rel="external">Dagger 2 Testing with Mockito</a></li>
+<li><a href="https://github.com/konmik/konmik.github.io/wiki/Snorkeling-with-Dagger-2" target="_blank" rel="external">Snorkeling with Dagger 2</a> </li>
+<li><a href="https://www.objc.io/issues/11-android/dependency-injection-in-java/" target="_blank" rel="external">Dependency Injection in Java</a></li>
+<li><a href="http://jellybeanssir.blogspot.de/2015/05/component-dependency-vs-submodules-in.html" target="_blank" rel="external">Component Dependency vs. Submodules in Dagger 2</a></li>
+<li><a href="https://github.com/joesteele/dagger2-component-scopes-test" target="_blank" rel="external">Dagger 2 Component Scopes Test</a></li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持优质技术分享，您的支持将鼓励我继续努力！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechatpay.png" alt="Qinfeng WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/01/13/2016-01-13-Android库的依赖管理/" rel="next" title="Android库项目的依赖管理">
+                <i class="fa fa-chevron-left"></i> Android库项目的依赖管理
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/02/05/2016-01-20-android-开发文化QualityMatter/" rel="prev" title="Android 开发文化quality matters">
+                Android 开发文化quality matters <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/01/25/2016-1-16-Dagger2-依赖注入/"
+           data-title="Dagger2依赖注入" data-url="http://yoursite.com/2016/01/25/2016-1-16-Dagger2-依赖注入/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Qinfeng" />
+          <p class="site-author-name" itemprop="name">Qinfeng</p>
+          <p class="site-description motion-element" itemprop="description">be a better coder</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#优势"><span class="nav-number">1.</span> <span class="nav-text">优势</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#配置"><span class="nav-number">2.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单个实例"><span class="nav-number">3.</span> <span class="nav-text">单个实例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#声明你的单个实例"><span class="nav-number">3.1.</span> <span class="nav-text">声明你的单个实例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定义注入目标"><span class="nav-number">3.2.</span> <span class="nav-text">定义注入目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码生成"><span class="nav-number">3.3.</span> <span class="nav-text">代码生成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实例化component"><span class="nav-number">3.4.</span> <span class="nav-text">实例化component</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#限定类型"><span class="nav-number">3.5.</span> <span class="nav-text">限定类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#域"><span class="nav-number">3.6.</span> <span class="nav-text">域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Component依赖"><span class="nav-number">3.7.</span> <span class="nav-text">Component依赖</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Subcomponents"><span class="nav-number">4.</span> <span class="nav-text">Subcomponents</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">5.</span> <span class="nav-text">References</span></a></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Qinfeng</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"yqf19930712githubio"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+       search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+    'use strict';
+    $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+            // get the contents from search data
+            isfetched = true;
+            $('.popup').detach().appendTo('.header-inner');
+            var datas = $( "entry", xmlResponse ).map(function() {
+                return {
+                    title: $( "title", this ).text(),
+                    content: $("content",this).text(),
+                    url: $( "url" , this).text()
+                };
+            }).get();
+            var $input = document.getElementById(search_id);
+            var $resultContent = document.getElementById(content_id);
+            $input.addEventListener('input', function(){
+                var matchcounts = 0;
+                var str='<ul class=\"search-result-list\">';
+                var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                $resultContent.innerHTML = "";
+                if (this.value.trim().length > 1) {
+                // perform local searching
+                datas.forEach(function(data) {
+                    var isMatch = true;
+                    var content_index = [];
+                    var data_title = data.title.trim().toLowerCase();
+                    var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                    var data_url = data.url;
+                    var index_title = -1;
+                    var index_content = -1;
+                    var first_occur = -1;
+                    // only match artiles with not empty titles and contents
+                    if(data_title != '' && data_content != '') {
+                        keywords.forEach(function(keyword, i) {
+                            index_title = data_title.indexOf(keyword);
+                            index_content = data_content.indexOf(keyword);
+                            if( index_title < 0 && index_content < 0 ){
+                                isMatch = false;
+                            } else {
+                                if (index_content < 0) {
+                                    index_content = 0;
+                                }
+                                if (i == 0) {
+                                    first_occur = index_content;
+                                }
+                            }
+                        });
+                    }
+                    // show search results
+                    if (isMatch) {
+                        matchcounts += 1;
+                        str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                        var content = data.content.trim().replace(/<[^>]+>/g,"");
+                        if (first_occur >= 0) {
+                            // cut out 100 characters
+                            var start = first_occur - 20;
+                            var end = first_occur + 80;
+                            if(start < 0){
+                                start = 0;
+                            }
+                            if(start == 0){
+                                end = 50;
+                            }
+                            if(end > content.length){
+                                end = content.length;
+                            }
+                            var match_content = content.substring(start, end);
+                            // highlight all keywords
+                            keywords.forEach(function(keyword){
+                                var regS = new RegExp(keyword, "gi");
+                                match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                            });
+
+                            str += "<p class=\"search-result\">" + match_content +"...</p>"
+                        }
+                        str += "</li>";
+                    }
+                })};
+                str += "</ul>";
+                if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+                if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+                $resultContent.innerHTML = str;
+            });
+            proceedsearch();
+        }
+    });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("synfJXikap0By20AXCEku4nu-gzGzoHsz", "lIciNXBcBpmpClv2TdTKJw3y");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+</body>
+</html>

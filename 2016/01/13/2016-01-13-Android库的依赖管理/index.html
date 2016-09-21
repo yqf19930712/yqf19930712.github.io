@@ -84,15 +84,16 @@
 
 
 
-<meta name="description" content="be a better coder">
-<meta property="og:type" content="website">
-<meta property="og:title" content="DreamX">
-<meta property="og:url" content="http://yoursite.com/archives/index.html">
+<meta name="description" content="当android开发者针对他们的项目选择library时，他们不仅仅关注功能，易用性，性能，文档，技术支持。他们也很关心library的size和增加项目方法的数量，随着项目的增长，它的依赖也一样（在增长），开发者对保持他的App的方法数在65k限制以下感到压力。等待non-release builds的Proguard（混淆器）太慢,开发者试图避免瘟疫一样multidex。这就是为什么libra">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android库项目的依赖管理">
+<meta property="og:url" content="http://yoursite.com/2016/01/13/2016-01-13-Android库的依赖管理/index.html">
 <meta property="og:site_name" content="DreamX">
-<meta property="og:description" content="be a better coder">
+<meta property="og:description" content="当android开发者针对他们的项目选择library时，他们不仅仅关注功能，易用性，性能，文档，技术支持。他们也很关心library的size和增加项目方法的数量，随着项目的增长，它的依赖也一样（在增长），开发者对保持他的App的方法数在65k限制以下感到压力。等待non-release builds的Proguard（混淆器）太慢,开发者试图避免瘟疫一样multidex。这就是为什么libra">
+<meta property="og:updated_time" content="2016-09-21T09:29:17.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="DreamX">
-<meta name="twitter:description" content="be a better coder">
+<meta name="twitter:title" content="Android库项目的依赖管理">
+<meta name="twitter:description" content="当android开发者针对他们的项目选择library时，他们不仅仅关注功能，易用性，性能，文档，技术支持。他们也很关心library的size和增加项目方法的数量，随着项目的增长，它的依赖也一样（在增长），开发者对保持他的App的方法数在65k限制以下感到压力。等待non-release builds的Proguard（混淆器）太慢,开发者试图避免瘟疫一样multidex。这就是为什么libra">
 
 
 
@@ -113,9 +114,9 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/archives/"/>
+  <link rel="canonical" href="http://yoursite.com/2016/01/13/2016-01-13-Android库的依赖管理/"/>
 
-  <title> 归档 | DreamX </title>
+  <title> Android库项目的依赖管理 | DreamX </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -146,7 +147,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left  page-archive  ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -257,177 +258,184 @@
           <div id="content" class="content">
             
 
-  <section id="posts" class="posts-collapse">
-    <span class="archive-move-on"></span>
-
-    <span class="archive-page-counter">
-      
-      
-      
-        
-      
-      嗯..! 目前共计 4 篇日志。 继续努力。
-    </span>
-
+  <div id="posts" class="posts-expand">
     
 
-      
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Android库项目的依赖管理
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-01-13T07:52:14Z" content="2016-01-13">
+              2016-01-13
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/01/13/2016-01-13-Android库的依赖管理/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/13/2016-01-13-Android库的依赖管理/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/01/13/2016-01-13-Android库的依赖管理/" class="leancloud_visitors" data-flag-title="Android库项目的依赖管理">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
       
       
 
       
+        <p>当android开发者针对他们的项目选择library时，他们不仅仅关注功能，易用性，性能，文档，技术支持。他们也很关心library的size和增加项目方法的数量，随着项目的增长，它的依赖也一样（在增长），开发者对保持他的App的方法数在65k限制以下感到压力。等待non-release builds的Proguard（混淆器）太慢,开发者试图避免瘟疫一样multidex。这就是为什么library作者认为他们的项目的大小很重要。</p>
+<a id="more"></a>
+<p>控制你的library的方法数最简单的方法是不加入任何非必需的依赖。任何library加入的依赖会传递性的加入用户的项目中。例如，如果你需要几个简单的工具方法（像关闭资源），不要为它去加入Guava依赖，自己写或从通过现有library解决。当你自需要几个工具方法并没有加入14k方法，你的用户肯定会感激你。</p>
+<p>那并不是说你应该经常避免使用外部libraries。你只需要稍加考虑，有http libraries时不要写一个http client，你应该停止浪费时间去更好的改善你的library。</p>
+<p>不考虑加入依赖的简单方法，你可以使用下面几种方法保持你library的“身材”，一种方法是声明依赖时使用 provide scope ，它属于android gradle 构建系统的一部分。对立的是compile，provide scope只会在编译时加入依赖 ，这意味着当用户们build他们的项目时依赖不会被打包到APK中。使用依赖的用户需要在他们的应用显式声明依赖。</p>
+<p>注释：也可以选择package scope，依赖会被打包到APK但编译时不可用。</p>
+<p>在你的library项目中使用可选依赖的原因：</p>
+<p>1.依赖的核心功能只会被你用户的子集用到，在Retrofit 1.x就可以看到，用户可以通过响应式的调用REST calls而不是回调，那些想使用RxJava的用户可以加入其依赖，其他用户不用负担额外依赖。 Retrofit 使用maven构建系统后配置稍有不同，但是思路是一致的。</p>
+<p>我应该警告你发现你自己加入的依赖的功能不是对所有用户都有用，你真的应该考虑依赖的功能是否应该作为你library的一部分，稍后再详细说明。</p>
+<p>2.android框架中已经存在一种解决方案，但是外部library提供一种更高效解决方案。为了更好的性能已加入外部依赖或愿意承担增长的方法数的用户可以加入依赖。</p>
+<p>最近我无意中在PlacesAutocompleteTextView library发现这种方法的应用，它内部的http client可以是okhttp client或是http url connection，前者总体来说性能更高，但是要求添加okhttp依赖。如果用户不希望添加它，他会自动回退使用标准库的http url connection。</p>
+<p>为应用此方法，由resolver（决策者）这个类在运行时决定依赖那个library。例如下面这个类来决定使用哪个http client</p>
+<pre><code>public final class PlacesHttpClientResolver { 
+    public static final PlacesHttpClient PLACES_HTTP_CLIENT; 
+    static { 
+        boolean hasOkHttp; 
+        try { 
+            Class.forName(&quot;com.squareup.okhttp.OkHttpClient&quot;);
+            hasOkHttp = true; 
+        } catch (ClassNotFoundException e) { 
+            hasOkHttp = false; 
+        } 
+        PlacesApiJsonParser parser = JsonParserResolver.JSON_PARSER;
+        PLACES_HTTP_CLIENT = hasOkHttp ? new OkHttpPlacesHttpClient(parser) : new HttpUrlConnectionMapsHttpClient(parser); 
+        } 
+    private PlacesHttpClientResolver() { throw new RuntimeException(&quot;No Instances!&quot;); } 
+}
+</code></pre><p>当类被加载，通过全路径类名检查okhttpclient的可用性，如果抛出classnotfoundexception，然后我就知道okhttp没有被用户添加，我们回退到httpurlconnection。placeshttpclient作为包装类了通过内部代码库使用所有实现中一种的接口。同样的方法可以被用到json解析，gson可以作为可选依赖。</p>
+<p>如果平衡性能和大小很重要，这种方法是不错的。一般回退的实现需要更多的精力（例如json parsing）我推荐一开始使用外部library节省时间然后考虑在后续发布版本加入回退实现。</p>
+<p>我先前提到你应该考虑你的library 包含哪个功能。如果某个功能不会被几乎所有用户所使用，最好还是不要引入它。这令第一种使用可选依赖的方法更少被采纳。再以retrofit为例，它在2.x发布版本不再提供消费响应式rest calls 作为它核心库的一部分。这一功能被移动到分离模块作为他所在的maven特性发布。</p>
+<p>同样的，不同response转换器也被分到它们自己的依赖，例如，需要转换json response 和已经依赖gson的retofit 用户可以添加下面依赖到他们的build.gradle 文件</p>
+<pre><code>dependencies {
+      compile &apos;com.squareup.retrofit:converter-gson:2.0.0-beta2&apos;
+}
+</code></pre><p>使用不同json库像jackson或需要解析不同数据格式像xml或protobuf buffers的用户可以这样做而不必负担所有服务retrofit用户的外部库。重要的一点，核心库不会被多余的功能污染，聚焦的主要观点被解决。</p>
+<p>如果你发现android开发者会使用你自己写的库，当你设计时用上这些策略。考虑你库的大小不仅仅作为附属，而是一种特性。为此你的用户会由衷的感谢你。</p>
+<h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><p><a href="http://johnpetitto.com/android-lib-dependency-management/" target="_blank" rel="external">原文链接</a></p>
+
+      
+    </div>
+
+    <div>
+      
         
-        <div class="collection-title">
-          <h2 class="archive-year motion-element" id="archive-year-2016">2016</h2>
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持优质技术分享，您的支持将鼓励我继续努力！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechatpay.png" alt="Qinfeng WeChat Pay"/>
+          <p>微信打赏</p>
         </div>
       
       
+    </div>
+  </div>
+
 
       
+    </div>
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    <footer class="post-footer">
+      
 
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2016/09/02/2016-8-20-深入浅出ConstraintLayout：part1/" itemprop="url">
-              
-                <span itemprop="name">深入浅出ConstraintLayout（约束布局）：Part1</span>
-              
-            </a>
-        
-      </h1>
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2016-09-02T08:36:29Z"
-              content="2016-09-02" >
-          09-02
-        </time>
-      </div>
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/01/25/2016-1-16-Dagger2-依赖注入/" rel="prev" title="Dagger2依赖注入">
+                Dagger2依赖注入 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
 
-    </header>
+      
+      
+    </footer>
   </article>
 
 
 
-    
-
+    <div class="post-spread">
       
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2016/02/05/2016-01-20-android-开发文化QualityMatter/" itemprop="url">
-              
-                <span itemprop="name">Android 开发文化quality matters</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2016-02-05T09:40:09Z"
-              content="2016-02-05" >
-          02-05
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2016/01/25/2016-1-16-Dagger2-依赖注入/" itemprop="url">
-              
-                <span itemprop="name">Dagger2依赖注入</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2016-01-25T10:06:24Z"
-              content="2016-01-25" >
-          01-25
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-      
-      
-      
-
-      
-      
-
-      
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h1 class="post-title">
-        
-            <a class="post-title-link" href="/2016/01/13/2016-01-13-Android库的依赖管理/" itemprop="url">
-              
-                <span itemprop="name">Android库项目的依赖管理</span>
-              
-            </a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2016-01-13T07:52:14Z"
-              content="2016-01-13" >
-          01-13
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-    
-
-  </section>
-
-  
-
+    </div>
+  </div>
 
 
           </div>
@@ -435,6 +443,14 @@
 
 
           
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/01/13/2016-01-13-Android库的依赖管理/"
+           data-title="Android库项目的依赖管理" data-url="http://yoursite.com/2016/01/13/2016-01-13-Android库的依赖管理/">
+      </div>
+    
+  </div>
+
 
         </div>
         
@@ -454,8 +470,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.png"
@@ -505,6 +530,17 @@
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">1.</span> <span class="nav-text">References</span></a></li></ol></div>
+            
+          </div>
+        </section>
       
 
     </div>
@@ -608,11 +644,9 @@
 
 
   
-  
-    <script type="text/javascript" id="motion.page.archive">
-      $('.archive-year').velocity('transition.slideLeftIn');
-    </script>
-  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
 
 
   
