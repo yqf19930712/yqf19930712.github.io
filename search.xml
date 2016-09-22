@@ -5,7 +5,7 @@
     
     <entry>
       <title><![CDATA[深入浅出ConstraintLayout（约束布局）：Part1]]></title>
-      <url>http://yoursite.com/2016/09/02/2016-8-20-%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAConstraintLayout%EF%BC%9Apart1/</url>
+      <url>http://www.yangqinfeng.com/2016/09/02/2016-8-20-%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAConstraintLayout%EF%BC%9Apart1/</url>
       <content type="html"><![CDATA[<blockquote>
 <p>ConstraintLayout和布局编辑器工具目前是预览版本。本文内容是基于 <code>constraint-layout:1.0.0-alpha4</code>的代码和行为。在最终版本的工具中这些行为可能会改变。</p>
 </blockquote>
@@ -251,7 +251,7 @@
     
     <entry>
       <title><![CDATA[Android 开发文化quality matters]]></title>
-      <url>http://yoursite.com/2016/02/05/2016-01-20-android-%E5%BC%80%E5%8F%91%E6%96%87%E5%8C%96QualityMatter/</url>
+      <url>http://www.yangqinfeng.com/2016/02/05/2016-01-20-android-%E5%BC%80%E5%8F%91%E6%96%87%E5%8C%96QualityMatter/</url>
       <content type="html"><![CDATA[<p>Android 开发有问题（在过去的7年）。大多数项目没有测试（单元，集成，功能); 编译器和lint的警告被忽视; 代码像臭的意大利面条。</p>
 <p>坏消息: Google从一开始就参与这样的Android开发文化。</p>
 <blockquote class="blockquote-center"><p>perfmatters VS qualitymatters</p>
@@ -316,7 +316,7 @@
     
     <entry>
       <title><![CDATA[Dagger2依赖注入]]></title>
-      <url>http://yoursite.com/2016/01/25/2016-1-16-Dagger2-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/</url>
+      <url>http://www.yangqinfeng.com/2016/01/25/2016-1-16-Dagger2-%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/</url>
       <content type="html"><![CDATA[<p>许多android应用实例化对象经常要求其他依赖，举个例子，实例化twitter API client使用网络（retrofit），为了使用这个库，你也许需要加入解析库（Gson），另外，实现认证或缓存也许需要shared preference 或其他普通存储的类要求首先实例化它们并形成依赖链。</p>
 <p>dagger2 为你分析这些依赖并生成代码把它们串起来。尽管有其他依赖注入库，大多受限于依赖XML，要求在运行时验证依赖问题或在启动时造成性能负担。dagger 2 完全通过使用java annotation processors和编译时检查来分析和验证依赖。直到现在它被认为是最高效的依赖注入框架之一。</p>
 <a id="more"></a>
@@ -668,7 +668,7 @@ public interface MyApplicationComponent {
     
     <entry>
       <title><![CDATA[Android库项目的依赖管理]]></title>
-      <url>http://yoursite.com/2016/01/13/2016-01-13-Android%E5%BA%93%E7%9A%84%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/</url>
+      <url>http://www.yangqinfeng.com/2016/01/13/2016-01-13-Android%E5%BA%93%E7%9A%84%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86/</url>
       <content type="html"><![CDATA[<p>当android开发者针对他们的项目选择library时，他们不仅仅关注功能，易用性，性能，文档，技术支持。他们也很关心library的size和增加项目方法的数量，随着项目的增长，它的依赖也一样（在增长），开发者对保持他的App的方法数在65k限制以下感到压力。等待non-release builds的Proguard（混淆器）太慢,开发者试图避免瘟疫一样multidex。这就是为什么library作者认为他们的项目的大小很重要。</p>
 <a id="more"></a>
 <p>控制你的library的方法数最简单的方法是不加入任何非必需的依赖。任何library加入的依赖会传递性的加入用户的项目中。例如，如果你需要几个简单的工具方法（像关闭资源），不要为它去加入Guava依赖，自己写或从通过现有library解决。当你自需要几个工具方法并没有加入14k方法，你的用户肯定会感激你。</p>
