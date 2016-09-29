@@ -84,12 +84,28 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="DreamX">
-<meta property="og:url" content="http://www.yangqinfeng.com/index.html">
+<meta name="description" content="了解项目规范不仅能提高你自己的项目质量，而且可以帮助你学习其他符合项目规范的开源项目
+
+1.Android项目指南1.1 项目结构新项目应该遵守Android Gradle plugin user guide定义的Android Gradle项目结构. 从开始ribot Boilerplate 项目就是一个很好的参考.
+1.2 文件命名1.2.1 类文件类名使用驼峰式大小写书写.
+对于继承And">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android项目指南">
+<meta property="og:url" content="http://www.yangqinfeng.com/2016/02/11/2016-9-13-Android-guide/index.html">
 <meta property="og:site_name" content="DreamX">
+<meta property="og:description" content="了解项目规范不仅能提高你自己的项目质量，而且可以帮助你学习其他符合项目规范的开源项目
+
+1.Android项目指南1.1 项目结构新项目应该遵守Android Gradle plugin user guide定义的Android Gradle项目结构. 从开始ribot Boilerplate 项目就是一个很好的参考.
+1.2 文件命名1.2.1 类文件类名使用驼峰式大小写书写.
+对于继承And">
+<meta property="og:updated_time" content="2016-09-29T06:13:18.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="DreamX">
+<meta name="twitter:title" content="Android项目指南">
+<meta name="twitter:description" content="了解项目规范不仅能提高你自己的项目质量，而且可以帮助你学习其他符合项目规范的开源项目
+
+1.Android项目指南1.1 项目结构新项目应该遵守Android Gradle plugin user guide定义的Android Gradle项目结构. 从开始ribot Boilerplate 项目就是一个很好的参考.
+1.2 文件命名1.2.1 类文件类名使用驼峰式大小写书写.
+对于继承And">
 
 
 
@@ -110,9 +126,9 @@
 
 
 
-  <link rel="canonical" href="http://www.yangqinfeng.com/"/>
+  <link rel="canonical" href="http://www.yangqinfeng.com/2016/02/11/2016-9-13-Android-guide/"/>
 
-  <title> DreamX </title>
+  <title> Android项目指南 | DreamX </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -143,9 +159,7 @@
     
   
 
-  <div class="container one-collumn sidebar-position-left 
-   page-home 
- ">
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -255,9 +269,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
   
@@ -277,130 +291,7 @@
             
             
               
-                
-                <a class="post-title-link" href="/2016/09/02/2016-8-20-深入浅出ConstraintLayout：part1/" itemprop="url">
-                  深入浅出ConstraintLayout（约束布局）：Part1
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-09-02T08:36:29Z" content="2016-09-02">
-              2016-09-02
-            </time>
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/09/02/2016-8-20-深入浅出ConstraintLayout：part1/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/02/2016-8-20-深入浅出ConstraintLayout：part1/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2016/09/02/2016-8-20-深入浅出ConstraintLayout：part1/" class="leancloud_visitors" data-flag-title="深入浅出ConstraintLayout（约束布局）：Part1">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <blockquote>
-<p>ConstraintLayout和布局编辑器工具目前是预览版本。本文内容是基于 <code>constraint-layout:1.0.0-alpha4</code>的代码和行为。在最终版本的工具中这些行为可能会改变。</p>
-</blockquote>
-<p>谷歌I/O 2016年宣布了提高布局体验的新工具和库来构建Android应用程序，Android stuido已经嵌入了基于约束的可视化布局编辑器，和运行时解释这些约束的<code>ConstraintLayout</code>新容器。</p>
-<p>本文重点解释<code>ConstraintLayout</code>容器的结构和它是如何工作的，新的Android stuido布局编辑器的功能是为开发者更容易管理<code>ConstraintLayout</code>容器强大和灵活的特性而设计的。深入理解<code>ConstraintLayout</code>,我们将能更好地使用开发工具。</p>
-<blockquote>
-<p><code>ConstraintLayout</code>作为一个非捆绑支持库发布，因此你会在本文看到许多XML属性以<code>app:</code>为前缀而非<code>android:</code>:因为它们都来自本地包命名空间。</p>
-</blockquote>
-<p>让我们从定义约束是什么开始…</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/09/02/2016-8-20-深入浅出ConstraintLayout：part1/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/02/11/2016-9-13-Android-guide/" itemprop="url">
-                  Android项目指南
-                </a>
+                Android项目指南
               
             
           </h1>
@@ -456,9 +347,7 @@
       
 
       
-        
-          
-            <blockquote>
+        <blockquote>
 <p>了解项目规范不仅能提高你自己的项目质量，而且可以帮助你学习其他符合项目规范的开源项目</p>
 </blockquote>
 <h1 id="1-Android项目指南"><a href="#1-Android项目指南" class="headerlink" title="1.Android项目指南"></a>1.Android项目指南</h1><h2 id="1-1-项目结构"><a href="#1-1-项目结构" class="headerlink" title="1.1 项目结构"></a>1.1 项目结构</h2><p>新项目应该遵守<a href="http://tools.android.com/tech-docs/new-build-system/user-guide#TOC-Project-Structure" target="_blank" rel="external">Android Gradle plugin user guide</a>定义的Android Gradle项目结构. 从开始<a href="https://github.com/ribot/android-boilerplate" target="_blank" rel="external">ribot Boilerplate</a> 项目就是一个很好的参考.</p>
@@ -1128,156 +1017,36 @@ loadPicture(context,
         .check(matches(isDisplayed()))
 </code></pre><h2 id="References"><a href="#References" class="headerlink" title="References"></a>References</h2><p><a href="https://github.com/ribot/android-guidelines/blob/master/project_and_code_guidelines.md" target="_blank" rel="external">原文链接</a></p>
 
-          
-        
       
     </div>
 
     <div>
       
+        
+
+      
     </div>
 
     <div>
       
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
         
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/02/05/2016-01-20-android-开发文化QualityMatter/" itemprop="url">
-                  Android 开发文化quality matters
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-02-05T09:40:09Z" content="2016-02-05">
-              2016-02-05
-            </time>
-          </span>
-
-          
-            <span class="post-category" >
-              &nbsp; | &nbsp;
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-              
-                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
-                  <a href="/categories/Testing/" itemprop="url" rel="index">
-                    <span itemprop="name">Testing</span>
-                  </a>
-                </span>
-
-                
-                
-
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/02/05/2016-01-20-android-开发文化QualityMatter/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/02/05/2016-01-20-android-开发文化QualityMatter/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2016/02/05/2016-01-20-android-开发文化QualityMatter/" class="leancloud_visitors" data-flag-title="Android 开发文化quality matters">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持优质技术分享，您的支持将鼓励我继续努力！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechatpay.png" alt="Qinfeng WeChat Pay"/>
+          <p>微信打赏</p>
         </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
       
-      
-
-      
-        
-          <p>Android 开发有问题（在过去的7年）。大多数项目没有测试（单元，集成，功能); 编译器和lint的警告被忽视; 代码像臭的意大利面条。</p>
-<p>坏消息: Google从一开始就参与这样的Android开发文化。</p>
-<blockquote class="blockquote-center"><p>perfmatters VS qualitymatters</p>
-</blockquote>
-<p>是的，google 关心perfmatters，但是qualitymatters更重要并且应该优先考虑。</p>
-<blockquote>
-<p>Optimization without a good level of code quality is a kind of premature optimization，premature optimization is also known as the root of all evil (not in all situations，but mostly it is evil)。</p>
-</blockquote>
-<p>好消息: 公司像Square，SoundCloud，Twitter和一些开发者通过做演讲，写博客使Android 开发更好，非常感谢他们。同时，谷歌终于对提高Android应用程序质量感兴趣: 在 AndroidDevSummit 和其他近期会议我们看见关于测试的内容，请继续保持!</p>
-<p><strong>是时候搞定Android开发了</strong>。<br>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/02/05/2016-01-20-android-开发文化QualityMatter/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
       
     </div>
+  </div>
 
-    <div>
-      
-    </div>
 
-    <div>
       
     </div>
 
@@ -1285,244 +1054,36 @@ loadPicture(context,
       
 
       
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
+              <a href="/2016/02/05/2016-01-20-android-开发文化QualityMatter/" rel="next" title="Android 开发文化quality matters">
+                <i class="fa fa-chevron-left"></i> Android 开发文化quality matters
+              </a>
             
-              
-                
-                <a class="post-title-link" href="/2016/01/25/2016-1-16-Dagger2-依赖注入/" itemprop="url">
-                  Dagger2依赖注入
-                </a>
-              
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
             
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-01-25T10:06:24Z" content="2016-01-25">
-              2016-01-25
-            </time>
-          </span>
-
-          
-
-          
+              <a href="/2016/09/02/2016-8-20-深入浅出ConstraintLayout：part1/" rel="prev" title="深入浅出ConstraintLayout（约束布局）：Part1">
+                深入浅出ConstraintLayout（约束布局）：Part1 <i class="fa fa-chevron-right"></i>
+              </a>
             
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/01/25/2016-1-16-Dagger2-依赖注入/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/25/2016-1-16-Dagger2-依赖注入/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2016/01/25/2016-1-16-Dagger2-依赖注入/" class="leancloud_visitors" data-flag-title="Dagger2依赖注入">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
+          </div>
         </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          <p>许多android应用实例化对象经常要求其他依赖，举个例子，实例化twitter API client使用网络（retrofit），为了使用这个库，你也许需要加入解析库（Gson），另外，实现认证或缓存也许需要shared preference 或其他普通存储的类要求首先实例化它们并形成依赖链。</p>
-<p>dagger2 为你分析这些依赖并生成代码把它们串起来。尽管有其他依赖注入库，大多受限于依赖XML，要求在运行时验证依赖问题或在启动时造成性能负担。dagger 2 完全通过使用java annotation processors和编译时检查来分析和验证依赖。直到现在它被认为是最高效的依赖注入框架之一。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/01/25/2016-1-16-Dagger2-依赖注入/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-      
 
-  
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2016/01/13/2016-01-13-Android库的依赖管理/" itemprop="url">
-                  Android库项目的依赖管理
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            <span class="post-meta-item-icon">
-              <i class="fa fa-calendar-o"></i>
-            </span>
-            <span class="post-meta-item-text">发表于</span>
-            <time itemprop="dateCreated" datetime="2016-01-13T07:52:14Z" content="2016-01-13">
-              2016-01-13
-            </time>
-          </span>
-
-          
-
-          
-            
-              <span class="post-comments-count">
-                &nbsp; | &nbsp;
-                <a href="/2016/01/13/2016-01-13-Android库的依赖管理/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/01/13/2016-01-13-Android库的依赖管理/" itemprop="commentsCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-             <span id="/2016/01/13/2016-01-13-Android库的依赖管理/" class="leancloud_visitors" data-flag-title="Android库项目的依赖管理">
-               &nbsp; | &nbsp;
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               <span class="post-meta-item-text">阅读次数 </span>
-               <span class="leancloud-visitors-count"></span>
-              </span>
-          
-
-          
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>当android开发者针对他们的项目选择library时，他们不仅仅关注功能，易用性，性能，文档，技术支持。他们也很关心library的size和增加项目方法的数量，随着项目的增长，它的依赖也一样（在增长），开发者对保持他的App的方法数在65k限制以下感到压力。等待non-release builds的Proguard（混淆器）太慢,开发者试图避免瘟疫一样multidex。这就是为什么library作者认为他们的项目的大小很重要。</p>
-          <div class="post-more-link text-center">
-            <a class="btn" href="/2016/01/13/2016-01-13-Android库的依赖管理/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-        
+    <div class="post-spread">
       
     </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-  </section>
-
-  
+  </div>
 
 
           </div>
@@ -1530,6 +1091,14 @@ loadPicture(context,
 
 
           
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/02/11/2016-9-13-Android-guide/"
+           data-title="Android项目指南" data-url="http://www.yangqinfeng.com/2016/02/11/2016-9-13-Android-guide/">
+      </div>
+    
+  </div>
+
 
         </div>
         
@@ -1549,8 +1118,17 @@ loadPicture(context,
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview sidebar-panel  sidebar-panel-active ">
+      <section class="site-overview sidebar-panel ">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
           <img class="site-author-image" itemprop="image"
                src="/images/avatar.png"
@@ -1620,6 +1198,17 @@ loadPicture(context,
 
       </section>
 
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-Android项目指南"><span class="nav-number">1.</span> <span class="nav-text">1.Android项目指南</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-项目结构"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 项目结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-文件命名"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 文件命名</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-1-类文件"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.2.1 类文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-2-资源文件"><span class="nav-number">1.2.2.</span> <span class="nav-text">1.2.2 资源文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-2-1-Drawable-文件"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">1.2.2.1 Drawable 文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-2-2-布局文件（Layout-files）"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">1.2.2.2 布局文件（Layout files）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-2-3-菜单文件（menu-files）"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">1.2.2.3 菜单文件（menu files）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-2-4-值文件（Values-files）"><span class="nav-number">1.2.2.4.</span> <span class="nav-text">1.2.2.4 值文件（Values files）</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-代码指南"><span class="nav-number">2.</span> <span class="nav-text">2 代码指南</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-Java-语言规范"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 Java 语言规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-1-不要忽略异常"><span class="nav-number">2.1.1.</span> <span class="nav-text">2.1.1 不要忽略异常</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-2-不要捕获通用异常"><span class="nav-number">2.1.2.</span> <span class="nav-text">2.1.2 不要捕获通用异常</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-3-不要使用finalizers"><span class="nav-number">2.1.3.</span> <span class="nav-text">2.1.3 不要使用finalizers</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-4-全限定导入"><span class="nav-number">2.1.4.</span> <span class="nav-text">2.1.4 全限定导入</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-Java-风格规范"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 Java 风格规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-1-域定义和命名"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.2.1 域定义和命名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-3-对待缩略词像单词一样"><span class="nav-number">2.2.2.</span> <span class="nav-text">2.2.3 对待缩略词像单词一样</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-4-使用空格缩颈"><span class="nav-number">2.2.3.</span> <span class="nav-text">2.2.4 使用空格缩颈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-5-使用标准大括号风格"><span class="nav-number">2.2.4.</span> <span class="nav-text">2.2.5 使用标准大括号风格</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-6-注释（Annotations）"><span class="nav-number">2.2.5.</span> <span class="nav-text">2.2.6 注释（Annotations）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-6-1-注释实践"><span class="nav-number">2.2.5.1.</span> <span class="nav-text">2.2.6.1 注释实践</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-6-2-注释风格"><span class="nav-number">2.2.5.2.</span> <span class="nav-text">2.2.6.2 注释风格</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-7-限定变量作用域"><span class="nav-number">2.2.6.</span> <span class="nav-text">2.2.7 限定变量作用域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-8-导入语句排序"><span class="nav-number">2.2.7.</span> <span class="nav-text">2.2.8 导入语句排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-9-Logging-指南"><span class="nav-number">2.2.8.</span> <span class="nav-text">2.2.9 Logging 指南</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-10-类成员排序"><span class="nav-number">2.2.9.</span> <span class="nav-text">2.2.10 类成员排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-11-方法中参数排序"><span class="nav-number">2.2.10.</span> <span class="nav-text">2.2.11 方法中参数排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-13-字符串常量-命名-和值"><span class="nav-number">2.2.11.</span> <span class="nav-text">2.2.13 字符串常量, 命名, 和值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-14-Fragments-和-Activities中的参数"><span class="nav-number">2.2.12.</span> <span class="nav-text">2.2.14 Fragments 和 Activities中的参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-15-行长度限制"><span class="nav-number">2.2.13.</span> <span class="nav-text">2.2.15 行长度限制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-15-1-换行策略"><span class="nav-number">2.2.13.1.</span> <span class="nav-text">2.2.15.1 换行策略</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-16-RxJava-链风格"><span class="nav-number">2.2.14.</span> <span class="nav-text">2.2.16 RxJava 链风格</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-XML-风格规范"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 XML 风格规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-1-使用自闭和标签"><span class="nav-number">2.3.1.</span> <span class="nav-text">2.3.1 使用自闭和标签</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-2-资源命名"><span class="nav-number">2.3.2.</span> <span class="nav-text">2.3.2 资源命名</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-2-1-ID-命名"><span class="nav-number">2.3.2.1.</span> <span class="nav-text">2.3.2.1 ID 命名</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-2-2-字符串"><span class="nav-number">2.3.2.2.</span> <span class="nav-text">2.3.2.2 字符串</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-2-3-Styles-and-Themes"><span class="nav-number">2.3.2.3.</span> <span class="nav-text">2.3.2.3 Styles and Themes</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-3-属性排序"><span class="nav-number">2.3.3.</span> <span class="nav-text">2.3.3 属性排序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-测试风格规范"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 测试风格规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-1-单元测试"><span class="nav-number">2.4.1.</span> <span class="nav-text">2.4.1 单元测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-2-Espresso-测试"><span class="nav-number">2.4.2.</span> <span class="nav-text">2.4.2 Espresso 测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#References"><span class="nav-number">2.5.</span> <span class="nav-text">References</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
       
 
     </div>
@@ -1723,6 +1312,10 @@ loadPicture(context,
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
 
   
 
